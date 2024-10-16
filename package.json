@@ -1,0 +1,14 @@
+{
+    "name": "@mkja/g",
+    "version": "0.0.1",
+    "type": "module",
+    "main": "./main.js",
+    "exports": {
+        "./arcball": "./arcball/index.js",
+        "./vec-mat": "./vec-mat/index.js"
+    },
+    "browser": {
+        "./arcball/index.js": "./arcball/index.js",
+        "./vec-mat/index.js": "./vec-mat/index.js"
+    }
+}
