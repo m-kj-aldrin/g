@@ -41,6 +41,9 @@ const camera = new Camera(
   farPlane
 );
 
+let zoom = 1;
+camera.setOrthographic(-1 * zoom, 1 * zoom, -1 * zoom, 1 * zoom, 0.1, 1000);
+
 let projectViewMatrix = camera.getViewProjectionMatrix();
 
 // /**@type {Mat4} */
