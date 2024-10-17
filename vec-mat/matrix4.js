@@ -642,7 +642,7 @@ export class Mat4 {
      * @param {number} tz - Translation in Z.
      * @returns {Mat4} A new Mat4 instance representing the translation.
      */
-    static fromTranslation(tx, ty, tz) {
+    static fromTranslation(tx=0, ty=0, tz=0) {
         return new Mat4([
             1,
             0,
