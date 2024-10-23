@@ -1,11 +1,19 @@
 // import { Mat3, Mat4, Quat, Vec2, Vec3, Vec4 } from "../main.js";
 
+import { Vec4 } from "../main.js";
 import Mat4 from "../vec-mat/mat4.js";
 
-let m0 = Mat4.fromTranslation(1,2,3)
+let v0 = new Vec4(1, 0, 0);
+
+let m0 = Mat4.fromTranslation([1, 2, 3]);
+m0.elements = [1, 0, 0, 10, 0, 1, 0, 100, 0, 0, 1, 1000, 0, 0, 0, 1];
+// let m1 = Mat4.fromAxisAngle([1, 1, 1], Math.PI / 2);
+
+// v0.transform(m0)
+// console.log(v0.toString());
 
 console.log(m0.toString());
-
+// console.log(m1.toString());
 
 // let gr = Quat.fromAxisAngle(new Vec3(0, 1, 0), Math.PI / 2);
 // gr.toRotationMatrix()
