@@ -1,5 +1,5 @@
 import Mat3 from "./mat3.js";
-import Mat4 from "./mat4.js";
+import Mat4 from "./_mat4.js";
 import Vec3 from "./vec3.js";
 
 /**

@@ -1,4 +1,11 @@
-import { Mat3, Mat4, Quat, Vec2, Vec3, Vec4 } from "../main.js";
+// import { Mat3, Mat4, Quat, Vec2, Vec3, Vec4 } from "../main.js";
+
+import Mat4 from "../vec-mat/mat4.js";
+
+let m0 = Mat4.fromTranslation(1,2,3)
+
+console.log(m0.toString());
+
 
 // let gr = Quat.fromAxisAngle(new Vec3(0, 1, 0), Math.PI / 2);
 // gr.toRotationMatrix()

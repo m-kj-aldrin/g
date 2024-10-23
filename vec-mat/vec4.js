@@ -1,4 +1,4 @@
-import Mat4 from "./mat4.js";
+import Mat4 from "./_mat4.js";
 
 /**
  * Represents a 4-dimensional vector, often used for homogeneous coordinates in transformations.
