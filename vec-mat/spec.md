@@ -225,7 +225,6 @@ constructor((elements = new Float32Array(16).fill(0)));
 
 #### Matrix Methods (`Mat3`, `Mat4`)
 
--   `set(...elements)`: Sets the elements of the matrix. Elements should be provided in column-major order.
 -   `identity()`: Resets this matrix to the identity matrix.
 -   `clone()`: Creates a clone of this matrix.
 -   `multiply(other)`:
