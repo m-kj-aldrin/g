@@ -73,9 +73,6 @@ export function getVectorComponents3(vector) {
   };
 }
 
-getVectorComponents3([1, 2, 3]);
-getVectorComponents3(new Vec3(1, 2, 3));
-
 /**@param {Vec4 | [number,number,number,number]} vector */
 export function getVectorComponents4(vector) {
   if (vector instanceof Vec4) return vector;
