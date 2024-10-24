@@ -1,3 +1,10 @@
+import {
+    validateNumber,
+    validateVector3,
+    validateMat4,
+    validateArray,
+} from "./validation.js";
+
 import Vec3 from "./vec3.js";
 
 class Mat4 {
@@ -8,7 +15,7 @@ class Mat4 {
      */
     constructor(...elements) {
         if (elements.length) {
-            this.fromArray(elements);
+            this.elements = elements;
         } else {
             this.#identity();
         }
@@ -19,33 +26,18 @@ class Mat4 {
     }
 
     /**
-     * @param {Float32Array | number[]} elements
+     * Sets the elements of the matrix, elements should be written in row-major
+     * @param {Float32Array | number[]} elements matrix elements in row-major
      */
     set elements(elements) {
-        if (elements.length !== 16) {
-            throw new Error("setMatrix requires exactly 16 values.");
+        validateArray(elements, "elements");
+
+        for (let i = 0; i < 16; i++) {
+            validateNumber(elements[i], `Element at index ${i}`);
+
+            let cri = (i % 4) * 4 + Math.floor(i / 4);
+            this.#elements[i] = elements[cri];
         }
-
-        // Update each element directly in the #elements array
-        this.#elements[0] = elements[0]; // Column 1, Row 1
-        this.#elements[1] = elements[4]; // Column 1, Row 2
-        this.#elements[2] = elements[8]; // Column 1, Row 3
-        this.#elements[3] = elements[12]; // Column 1, Row 4
-
-        this.#elements[4] = elements[1]; // Column 2, Row 1
-        this.#elements[5] = elements[5]; // Column 2, Row 2
-        this.#elements[6] = elements[9]; // Column 2, Row 3
-        this.#elements[7] = elements[13]; // Column 2, Row 4
-
-        this.#elements[8] = elements[2]; // Column 3, Row 1
-        this.#elements[9] = elements[6]; // Column 3, Row 2
-        this.#elements[10] = elements[10]; // Column 3, Row 3
-        this.#elements[11] = elements[14]; // Column 3, Row 4
-
-        this.#elements[12] = elements[3]; // Column 4, Row 1
-        this.#elements[13] = elements[7]; // Column 4, Row 2
-        this.#elements[14] = elements[11]; // Column 4, Row 3
-        this.#elements[15] = elements[15]; // Column 4, Row 4
     }
 
     #identity() {
@@ -62,11 +54,7 @@ class Mat4 {
      * @returns {Mat4} This instance for chaining.
      */
     multiply(other) {
-        if (!(other instanceof Mat4)) {
-            throw new TypeError(
-                'Parameter "other" must be an instance of Mat4.'
-            );
-        }
+        validateMat4(other, "other matrix");
 
         const a = this.#elements;
         const b = other.#elements;
@@ -87,28 +75,6 @@ class Mat4 {
     }
 
     /**
-     * @param {Float32Array | number[]} [array]
-     */
-    fromArray(array) {
-        if (!Array.isArray(array) && !(array instanceof Float32Array)) {
-            throw new TypeError(
-                'Parameter "array" must be an array of numbers.'
-            );
-        }
-
-        if (array.length !== 16) {
-            throw new Error('Parameter "array" must have exactly 16 elements.');
-        }
-
-        for (let i = 0; i < 16; i++) {
-            if (typeof array[i] !== "number") {
-                throw new TypeError(`Element at index ${i} is not a number.`);
-            }
-            this.#elements[i] = array[i];
-        }
-    }
-
-    /**
      * Returns a string representation of the matrix.
      * @returns {string} String representation of the matrix.
      */
@@ -124,76 +90,60 @@ class Mat4 {
         return str;
     }
 
-    // static
+    /* static methods */
+
+    /* - - validations - - */
+
+    /* - - validations - - */
+
+    /**@param {Vec3 | [number,number,number]} vector */
+    static #returnVectorComponents(vector) {
+        if (vector instanceof Vec3) {
+            return vector;
+        }
+        return {
+            x: vector?.[0] ?? 0,
+            y: vector?.[1] ?? 0,
+            z: vector?.[2] ?? 0,
+        };
+    }
 
     /**
-     * @param {Vec3 | [number,number,number]} vector
+     * Multiplies matries returning a new matrix
+     * @param  {...Mat4} matrices
+     * @returns matrix result
+     */
+    static multiply(...matrices) {
+        const result = matrices.reduce((r, m) => r.multiply(m), new Mat4());
+        return result;
+    }
+
+    /* - - scaling, rotation & translation matrices - - */
+
+    /**
+     * Returns a scaling matrix based on a 3d vector
+     * @param {Vec3 | [number,number,number]} vector 3d vector
+     * @returns A new matrix
      */
     static fromScaling(vector) {
-        if (vector instanceof Vec3) {
-            return new Mat4(
-                vector.x,
-                0,
-                0,
-                0,
-                0,
-                vector.y,
-                0,
-                0,
-                0,
-                0,
-                vector.z,
-                0,
-                0,
-                0,
-                0,
-                1
-            );
-        }
-        return new Mat4(
-            vector[0],
-            0,
-            0,
-            0,
-            0,
-            vector[1],
-            0,
-            0,
-            0,
-            0,
-            vector[2],
-            0,
-            0,
-            0,
-            0,
-            1
-        );
+        validateVector3(vector);
+
+        let { x, y, z } = Mat4.#returnVectorComponents(vector);
+
+        return new Mat4(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
     }
+
     /**
-     * @param {Vec3 | [number,number,number]} axis
-     * @param {number} angle
+     * Returns a rotation matrix based on a 3d vector and a angle
+     * @param {Vec3 | [number,number,number]} vector 3d vector
+     * @param {number} angle angle in radians
+     * @returns A new matrix
      */
-    static fromAxisAngle(axis, angle) {
-        if (typeof angle !== "number") {
-            throw new TypeError('Parameter "angle" must be a number.');
-        }
-        if (!(axis instanceof Vec3) && !Array.isArray(axis)) {
-            throw new TypeError(
-                'Parameter "axis" must be an instance of Vec3 or number[].'
-            );
-        }
+    static fromAxisAngle(vector, angle) {
+        validateNumber(angle, "angle");
+        validateVector3(vector);
 
-        let x, y, z;
-
-        if (axis instanceof Vec3) {
-            x = axis.x;
-            y = axis.y;
-            z = axis.z;
-        } else {
-            x = axis[0];
-            y = axis[1];
-            z = axis[2];
-        }
+        let { x, y, z } = Mat4.#returnVectorComponents(vector);
 
         const len = Math.hypot(x, y, z);
 
@@ -229,22 +179,20 @@ class Mat4 {
         );
         return rot;
     }
+
     /**
-     * @param {Vec3 | [number,number,number]} vector
+     * Returns a translation matrix based on a 3d vector
+     * @param {Vec3 | [number,number,number]} vector 3d vector
+     * @returns A new matrix
      */
     static fromTranslation(vector) {
-        let x, y, z;
-        if (vector instanceof Vec3) {
-            x = vector.x;
-            y = vector.y;
-            z = vector.z;
-        } else {
-            x = vector[0];
-            y = vector[1];
-            z = vector[2];
-        }
-        return new Mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y, z, 1);
+        validateVector3(vector);
+        let { x, y, z } = Mat4.#returnVectorComponents(vector);
+
+        return new Mat4(1, 0, 0, x, 0, 1, 0, y, 0, 0, 1, z, 0, 0, 0, 1);
     }
+
+    /* - - scaling, rotation & translation matrices - - */
 }
 
 export default Mat4;
