@@ -4,6 +4,7 @@ import {
     getVectorComponents4,
     validateMat4,
     validateNumber,
+    validateRange,
     validateVector4,
 } from "./validation.js";
 
@@ -266,11 +267,8 @@ class Vec4 {
     lerp(vector, t) {
         validateVector4(vector);
         validateNumber(t, "interpolation factor");
-        if (t < 0 || t > 1) {
-            throw new RangeError(
-                "Interpolation factor t must be between 0 and 1"
-            );
-        }
+        validateRange(t, { msg: "Interpolation factor t" });
+
         this.x += (vector.x - this.x) * t;
         this.y += (vector.y - this.y) * t;
         this.z += (vector.z - this.z) * t;
