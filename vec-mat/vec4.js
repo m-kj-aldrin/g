@@ -205,6 +205,56 @@ class Vec4 {
     }
 
     /**
+     * Clamps each component of the vector within the specified minimum and maximum values.
+     *
+     * @param {Vec4} min - The minimum bounds for each component.
+     * @param {Vec4} max - The maximum bounds for each component.
+     * @returns {Vec4} The clamped vector (this instance).
+     * @throws {TypeError} If either min or max is not an instance of Vec4.
+     */
+    clamp(min, max) {
+        validateVector4(min);
+        validateVector4(max);
+        this.x = Math.min(Math.max(this.x, min.x), max.x);
+        this.y = Math.min(Math.max(this.y, min.y), max.y);
+        this.z = Math.min(Math.max(this.z, min.z), max.z);
+        this.w = Math.min(Math.max(this.w, min.w), max.w);
+        return this;
+    }
+
+    /**
+     * Returns the component-wise minimum of this vector and another vector.
+     *
+     * @param {Vec4} vector - The other vector to compare with.
+     * @returns {Vec4} The vector with the minimum components (this instance).
+     * @throws {TypeError} If the provided vector is not an instance of Vec4.
+     */
+    min(vector) {
+        validateVector4(vector);
+        this.x = Math.min(this.x, vector.x);
+        this.y = Math.min(this.y, vector.y);
+        this.z = Math.min(this.z, vector.z);
+        this.w = Math.min(this.w, vector.w);
+        return this;
+    }
+
+    /**
+     * Returns the component-wise maximum of this vector and another vector.
+     *
+     * @param {Vec4} vector - The other vector to compare with.
+     * @returns {Vec4} The vector with the maximum components (this instance).
+     * @throws {TypeError} If the provided vector is not an instance of Vec4.
+     */
+    max(vector) {
+        validateVector4(vector);
+        this.x = Math.max(this.x, vector.x);
+        this.y = Math.max(this.y, vector.y);
+        this.z = Math.max(this.z, vector.z);
+        this.w = Math.max(this.w, vector.w);
+        return this;
+    }
+
+    /**
      * Multiplies this vector by a 4x4 matrix.
      *
      * This operation transforms the vector by the given matrix.
