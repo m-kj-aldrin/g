@@ -560,16 +560,16 @@ class Vec3 {
     /**
      * Creates a new vector by applying a transformation matrix to an existing vector.
      *
-     * This method does not modify the original vector but returns a new transformed vector.
+     * - If a Mat3 is provided, the vector is treated as a direction vector (w=0).
+     * - If a Mat4 is provided, the vector is treated as a point vector (w=1).
      *
      * @param {Vec3} vector - The vector to transform. Must be a Vec3 instance.
-     * @param {Mat3} matrix - The 3x3 transformation matrix to apply.
+     * @param {Mat3|Mat4} matrix - The matrix to transform the vector with.
      * @returns {Vec3} A new Vec3 instance representing the transformed vector.
      * @throws {TypeError} If the provided vector is not a Vec3 instance or if the matrix is not a Mat3 instance.
      */
     static fromTransform(vector, matrix) {
         validateVector3(vector);
-        validateMat3(matrix);
 
         return vector.clone().transform(matrix);
     }
