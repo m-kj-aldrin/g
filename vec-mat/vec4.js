@@ -3,6 +3,7 @@ import Mat4 from "./mat4.js";
 import {
     getVectorComponents4,
     validateMat4,
+    validateNonZero,
     validateNumber,
     validateRange,
     validateVector4,
@@ -388,9 +389,8 @@ class Vec4 {
      */
     normalize() {
         const len = this.length();
-        if (len === 0) {
-            throw new Error("Cannot normalize a zero-length vector");
-        }
+        validateNonZero(len, "Cannot normalize a zero length vector");
+
         this.x /= len;
         this.y /= len;
         this.z /= len;
@@ -429,6 +429,34 @@ class Vec4 {
     }
 
     // Static methods
+    
+    /**
+     * Adds two vectors and returns a new vector without modifying the originals.
+     *
+     * @param {Vec4} a - The first vector.
+     * @param {Vec4} b - The second vector.
+     * @returns {Vec4} A new Vec4 instance representing the sum.
+     * @throws {TypeError} If either a or b is not an instance of Vec4.
+     */
+    static add(a, b) {
+        validateVector4(a);
+        validateVector4(b);
+        return new Vec4(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);
+    }
+
+    /**
+     * Subtracts the second vector from the first and returns a new vector without modifying the originals.
+     *
+     * @param {Vec4} a - The vector to subtract from.
+     * @param {Vec4} b - The vector to subtract.
+     * @returns {Vec4} A new Vec4 instance representing the difference.
+     * @throws {TypeError} If either a or b is not an instance of Vec4.
+     */
+    static subtract(a, b) {
+        validateVector4(a);
+        validateVector4(b);
+        return new Vec4(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
+    }
 
     /**
      * Creates a new vector by applying a transformation matrix to an existing vector.

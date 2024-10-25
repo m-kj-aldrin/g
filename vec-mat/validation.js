@@ -82,6 +82,16 @@ export function validateRange(t, opt) {
         throw new RangeError(`${msg} must be between ${min} and ${max}`);
     }
 }
+
+/**
+ * @param {number} value
+ * @param {string} msg
+ */
+export function validateNonZero(value, msg = "value can not be equal to zero") {
+    if (value === 0) {
+        throw new Error(`${msg}`);
+    }
+}
 /**
  * Returns a Vec3 or {x:number,y:number,z:number}
  * @param {Vec3 | [number,number,number]} vector
