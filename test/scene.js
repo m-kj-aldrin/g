@@ -1,4 +1,4 @@
-import { Mat3, Mat4, Vec3, Vec4 } from "../main.js";
+import { Vec2, Vec3, Vec4, Mat2, Mat3, Mat4 } from "../main.js";
 
 // let normal = new Vec3(1, 0, 0);
 
