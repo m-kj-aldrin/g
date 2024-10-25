@@ -429,7 +429,7 @@ class Vec4 {
     }
 
     // Static methods
-    
+
     /**
      * Adds two vectors and returns a new vector without modifying the originals.
      *
@@ -456,6 +456,41 @@ class Vec4 {
         validateVector4(a);
         validateVector4(b);
         return new Vec4(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
+    }
+
+    /**
+     * Calculates the dot product of two vectors.
+     *
+     * @param {Vec4} a - The first vector.
+     * @param {Vec4} b - The second vector.
+     * @returns {number} The dot product of vectors a and b.
+     * @throws {TypeError} If either a or b is not an instance of Vec4.
+     */
+    static dot(a, b) {
+        validateVector4(a);
+        validateVector4(b);
+        return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+    }
+
+    /**
+     * Calculates the cross product of two vectors.
+     *
+     * **Note:** The cross product is traditionally defined for three-dimensional vectors.
+     * In this implementation, the w-component is ignored, and the resulting vector's w-component
+     * is set to 0.
+     *
+     * @param {Vec4} a - The first vector.
+     * @param {Vec4} b - The second vector.
+     * @returns {Vec4} A new Vec4 instance representing the cross product.
+     * @throws {TypeError} If either a or b is not an instance of Vec4.
+     */
+    static cross(a, b) {
+        validateVector4(a);
+        validateVector4(b);
+        const crossX = a.y * b.z - a.z * b.y;
+        const crossY = a.z * b.x - a.x * b.z;
+        const crossZ = a.x * b.y - a.y * b.x;
+        return new Vec4(crossX, crossY, crossZ, 0);
     }
 
     /**
