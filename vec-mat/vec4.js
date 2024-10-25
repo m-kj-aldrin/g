@@ -296,11 +296,13 @@ class Vec4 {
     /**
      * Multiplies this vector by a 4x4 matrix.
      *
-     * This operation transforms the vector by the given matrix.
+     * This operation transforms the vector by the given matrix, including translation,
+     * scaling, rotation, and perspective projection. If the resulting w-component is
+     * not 1 (and not 0), perspective division is performed to normalize the vector.
      *
      * @param {Mat4} matrix - The 4x4 matrix to transform the vector with.
      * @returns {Vec4} The transformed vector (this instance).
-     * @throws {TypeError} If the provided matrix is not a Mat4 instance.
+     * @throws {TypeError} If the provided matrix is not an instance of Mat4.
      */
     transform(matrix) {
         validateMat4(matrix);
@@ -312,10 +314,22 @@ class Vec4 {
 
         const e = matrix.elements;
 
-        this.x = e[0] * x + e[4] * y + e[8] * z + e[12] * w;
-        this.y = e[1] * x + e[5] * y + e[9] * z + e[13] * w;
-        this.z = e[2] * x + e[6] * y + e[10] * z + e[14] * w;
-        this.w = e[3] * x + e[7] * y + e[11] * z + e[15] * w;
+        const tX = e[0] * x + e[4] * y + e[8] * z + e[12] * w;
+        const tY = e[1] * x + e[5] * y + e[9] * z + e[13] * w;
+        const tZ = e[2] * x + e[6] * y + e[10] * z + e[14] * w;
+        const tW = e[3] * x + e[7] * y + e[11] * z + e[15] * w;
+
+        this.x = tX;
+        this.y = tY;
+        this.z = tZ;
+        this.w = tW;
+
+        if (this.w !== 0 && this.w !== 1) {
+            this.x /= this.w;
+            this.y /= this.w;
+            this.z /= this.w;
+            this.w = 1;
+        }
 
         return this;
     }
