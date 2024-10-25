@@ -1,133 +1,121 @@
+import Mat2 from "./mat2.js";
 import Mat3 from "./mat3.js";
 
+import {
+    validateNonZero,
+    validateNumber,
+    validateRange,
+    validateVector2,
+} from "./validation.js";
+
 /**
- * Represents a 2-dimensional vector in a right-handed coordinate system.
+ * Represents a two-dimensional vector.
+ *
+ * @class
  */
 class Vec2 {
     /**
-     * Creates a new Vec2 instance.
-     * @param {number} [x=0] - X-component.
-     * @param {number} [y=0] - Y-component.
+     * The x-component of the vector.
+     * @type {number}
+     */
+    #x = 0;
+
+    /**
+     * The y-component of the vector.
+     * @type {number}
+     */
+    #y = 0;
+
+    /**
+     * Constructs a new Vec2 instance.
+     *
+     * @param {number} [x=0] - The x-component of the vector.
+     * @param {number} [y=0] - The y-component of the vector.
      */
     constructor(x = 0, y = 0) {
-        this._x = x;
-        this._y = y;
+        if (x !== undefined) this.x = x;
+        if (y !== undefined) this.y = y;
     }
 
     /**
-     * X-component of the vector.
+     * Gets the x-component of the vector.
+     *
      * @type {number}
+     * @readonly
      */
     get x() {
-        return this._x;
-    }
-
-    set x(value) {
-        if (typeof value !== "number") {
-            throw new TypeError('Property "x" must be a number.');
-        }
-        this._x = value;
+        return this.#x;
     }
 
     /**
-     * Y-component of the vector.
+     * Sets the x-component of the vector.
+     *
+     * @param {number} value - The new x-component value.
+     * @throws {TypeError} If the provided value is not a number.
+     */
+    set x(value) {
+        validateNumber(value, "x component");
+        this.#x = value;
+    }
+
+    /**
+     * Gets the y-component of the vector.
+     *
      * @type {number}
+     * @readonly
      */
     get y() {
-        return this._y;
-    }
-
-    set y(value) {
-        if (typeof value !== "number") {
-            throw new TypeError('Property "y" must be a number.');
-        }
-        this._y = value;
+        return this.#y;
     }
 
     /**
-     * Creates a clone of this vector.
-     * @returns {Vec2} A new Vec2 instance with the same components.
+     * Sets the y-component of the vector.
+     *
+     * @param {number} value - The new y-component value.
+     * @throws {TypeError} If the provided value is not a number.
      */
-    clone() {
-        return new Vec2(this.x, this.y);
+    set y(value) {
+        validateNumber(value, "y component");
+        this.#y = value;
     }
 
     /**
      * Adds another vector to this vector.
-     * @param {Vec2} other - Vector to add.
-     * @returns {Vec2} This instance for chaining.
+     *
+     * @param {Vec2} vector - The vector to add.
+     * @returns {Vec2} The updated vector (this instance).
+     * @throws {TypeError} If the provided vector is not an instance of Vec2.
      */
-    add(other) {
-        if (!(other instanceof Vec2)) {
-            throw new TypeError(
-                'Parameter "other" must be an instance of Vec2.'
-            );
-        }
-        this.x += other.x;
-        this.y += other.y;
+    add(vector) {
+        validateVector2(vector);
+        this.x += vector.x;
+        this.y += vector.y;
         return this;
     }
 
     /**
      * Subtracts another vector from this vector.
-     * @param {Vec2} other - Vector to subtract.
-     * @returns {Vec2} This instance for chaining.
+     *
+     * @param {Vec2} vector - The vector to subtract.
+     * @returns {Vec2} The updated vector (this instance).
+     * @throws {TypeError} If the provided vector is not an instance of Vec2.
      */
-    subtract(other) {
-        if (!(other instanceof Vec2)) {
-            throw new TypeError(
-                'Parameter "other" must be an instance of Vec2.'
-            );
-        }
-        this.x -= other.x;
-        this.y -= other.y;
-        return this;
-    }
-
-    /**
-     * Multiplies this vector by another vector component-wise.
-     * @param {Vec2} other - Vector to multiply with.
-     * @returns {Vec2} This instance for chaining.
-     */
-    multiply(other) {
-        if (!(other instanceof Vec2)) {
-            throw new TypeError(
-                'Parameter "other" must be an instance of Vec2.'
-            );
-        }
-        this.x *= other.x;
-        this.y *= other.y;
-        return this;
-    }
-
-    /**
-     * Divides this vector by another vector component-wise.
-     * @param {Vec2} other - Vector to divide by.
-     * @returns {Vec2} This instance for chaining.
-     */
-    divide(other) {
-        if (!(other instanceof Vec2)) {
-            throw new TypeError(
-                'Parameter "other" must be an instance of Vec2.'
-            );
-        }
-        if (other.x === 0 || other.y === 0) {
-            throw new Error("Division by zero.");
-        }
-        this.x /= other.x;
-        this.y /= other.y;
+    subtract(vector) {
+        validateVector2(vector);
+        this.x -= vector.x;
+        this.y -= vector.y;
         return this;
     }
 
     /**
      * Multiplies this vector by a scalar.
-     * @param {number} scalar - Scalar to multiply with.
-     * @returns {Vec2} This instance for chaining.
+     *
+     * @param {number} scalar - The scalar to multiply by.
+     * @returns {Vec2} The updated vector (this instance).
+     * @throws {TypeError} If the provided scalar is not a number.
      */
     multiplyScalar(scalar) {
-        if (typeof scalar !== "number") {
-            throw new TypeError('Parameter "scalar" must be a number.');
-        }
+        validateNumber(scalar, "scalar");
         this.x *= scalar;
         this.y *= scalar;
         return this;
@@ -135,15 +123,16 @@ class Vec2 {
 
     /**
      * Divides this vector by a scalar.
-     * @param {number} scalar - Scalar to divide by.
-     * @returns {Vec2} This instance for chaining.
+     *
+     * @param {number} scalar - The scalar to divide by.
+     * @returns {Vec2} The updated vector (this instance).
+     * @throws {TypeError} If the provided scalar is not a number.
+     * @throws {Error} If attempting to divide by zero.
      */
     divideScalar(scalar) {
-        if (typeof scalar !== "number") {
-            throw new TypeError('Parameter "scalar" must be a number.');
-        }
+        validateNumber(scalar, "scalar");
         if (scalar === 0) {
-            throw new Error("Division by zero.");
+            throw new Error("Cannot divide by zero");
         }
         this.x /= scalar;
         this.y /= scalar;
@@ -151,699 +140,326 @@ class Vec2 {
     }
 
     /**
-     * Negates this vector (multiplies components by -1).
-     * @returns {Vec2} This instance for chaining.
+     * Clamps each component of the vector within the specified minimum and maximum values.
+     *
+     * @param {Vec2} min - The minimum bounds for each component.
+     * @param {Vec2} max - The maximum bounds for each component.
+     * @returns {Vec2} The clamped vector (this instance).
+     * @throws {TypeError} If either min or max is not an instance of Vec2.
      */
-    negate() {
-        this.x = -this.x;
-        this.y = -this.y;
+    clamp(min, max) {
+        validateVector2(min);
+        validateVector2(max);
+        this.x = Math.min(Math.max(this.x, min.x), max.x);
+        this.y = Math.min(Math.max(this.y, min.y), max.y);
         return this;
     }
 
     /**
-     * Normalizes this vector to unit length.
-     * @returns {Vec2} This instance for chaining.
-     * @throws {Error} If the vector length is zero.
+     * Returns the component-wise minimum of this vector and another vector.
+     *
+     * @param {Vec2} vector - The other vector to compare with.
+     * @returns {Vec2} The vector with the minimum components (this instance).
+     * @throws {TypeError} If the provided vector is not an instance of Vec2.
      */
-    normalize() {
-        const len = this.length();
-        if (len === 0) {
-            throw new Error("Cannot normalize a zero-length vector.");
-        }
-        this.divideScalar(len);
+    min(vector) {
+        validateVector2(vector);
+        this.x = Math.min(this.x, vector.x);
+        this.y = Math.min(this.y, vector.y);
         return this;
     }
 
     /**
-     * Calculates the dot product with another vector.
-     * @param {Vec2} other - Vector to dot with.
-     * @returns {number} The dot product.
+     * Returns the component-wise maximum of this vector and another vector.
+     *
+     * @param {Vec2} vector - The other vector to compare with.
+     * @returns {Vec2} The vector with the maximum components (this instance).
+     * @throws {TypeError} If the provided vector is not an instance of Vec2.
      */
-    dot(other) {
-        if (!(other instanceof Vec2)) {
-            throw new TypeError(
-                'Parameter "other" must be an instance of Vec2.'
-            );
-        }
-        return this.x * other.x + this.y * other.y;
-    }
-
-    /**
-     * Returns the magnitude (length) of the vector.
-     * @returns {number} The length of the vector.
-     */
-    length() {
-        return Math.sqrt(this.x * this.x + this.y * this.y);
-    }
-
-    /**
-     * Returns the squared magnitude of the vector.
-     * @returns {number} The squared length of the vector.
-     */
-    lengthSquared() {
-        return this.x * this.x + this.y * this.y;
-    }
-
-    /**
-     * Computes the distance to another vector.
-     * @param {Vec2} other - Vector to compute distance to.
-     * @returns {number} The distance.
-     */
-    distanceTo(other) {
-        if (!(other instanceof Vec2)) {
-            throw new TypeError(
-                'Parameter "other" must be an instance of Vec2.'
-            );
-        }
-        const dx = this.x - other.x;
-        const dy = this.y - other.y;
-        return Math.sqrt(dx * dx + dy * dy);
-    }
-
-    /**
-     * Computes the squared distance to another vector.
-     * @param {Vec2} other - Vector to compute squared distance to.
-     * @returns {number} The squared distance.
-     */
-    distanceSquaredTo(other) {
-        if (!(other instanceof Vec2)) {
-            throw new TypeError(
-                'Parameter "other" must be an instance of Vec2.'
-            );
-        }
-        const dx = this.x - other.x;
-        const dy = this.y - other.y;
-        return dx * dx + dy * dy;
-    }
-
-    /**
-     * Calculates the angle to another vector (in radians).
-     * @param {Vec2} other - Vector to calculate angle to.
-     * @returns {number} The angle in radians.
-     * @throws {Error} If either vector has zero length.
-     */
-    angleTo(other) {
-        if (!(other instanceof Vec2)) {
-            throw new TypeError(
-                'Parameter "other" must be an instance of Vec2.'
-            );
-        }
-        const len1 = this.length();
-        const len2 = other.length();
-        if (len1 === 0 || len2 === 0) {
-            throw new Error("Cannot calculate angle with zero-length vector.");
-        }
-        const dotProd = this.dot(other);
-        const cosTheta = dotProd / (len1 * len2);
-        // Clamp to handle numerical inaccuracies
-        return Math.acos(Math.max(-1, Math.min(1, cosTheta)));
-    }
-
-    /**
-     * Linearly interpolates between this vector and another vector by factor t.
-     * @param {Vec2} other - The target vector.
-     * @param {number} t - Interpolation factor (0 <= t <= 1).
-     * @returns {Vec2} This instance for chaining.
-     */
-    lerp(other, t) {
-        if (!(other instanceof Vec2)) {
-            throw new TypeError(
-                'Parameter "other" must be an instance of Vec2.'
-            );
-        }
-        if (typeof t !== "number") {
-            throw new TypeError('Parameter "t" must be a number.');
-        }
-        this.x += (other.x - this.x) * t;
-        this.y += (other.y - this.y) * t;
+    max(vector) {
+        validateVector2(vector);
+        this.x = Math.max(this.x, vector.x);
+        this.y = Math.max(this.y, vector.y);
         return this;
     }
 
     /**
-     * Transforms this vector using a Mat3.
-     * @param {Mat3} matrix - The transformation matrix.
-     * @returns {Vec2} This instance for chaining.
+     * Linearly interpolates between this vector and another vector by a factor t.
+     *
+     * @param {Vec2} vector - The target vector to interpolate towards.
+     * @param {number} t - The interpolation factor (0 <= t <= 1).
+     * @returns {Vec2} The interpolated vector (this instance).
+     * @throws {TypeError} If the provided vector is not an instance of Vec2 or if t is not a number.
+     * @throws {RangeError} If t is not between 0 and 1.
+     */
+    lerp(vector, t) {
+        validateVector2(vector);
+        validateNumber(t, "interpolation factor");
+        validateRange(t, { msg: "Interpolation factor t" });
+
+        this.x += (vector.x - this.x) * t;
+        this.y += (vector.y - this.y) * t;
+        return this;
+    }
+
+    /**
+     * Checks if this vector is equal to another vector.
+     *
+     * @param {Vec2} vector - The other vector to compare with.
+     * @returns {boolean} True if all components are equal, otherwise false.
+     * @throws {TypeError} If the provided vector is not an instance of Vec2.
+     */
+    equals(vector) {
+        validateVector2(vector);
+        return this.x === vector.x && this.y === vector.y;
+    }
+
+    /**
+     * Multiplies this vector by a 2x2 or 3x3 matrix.
+     *
+     * - If a Mat2 is provided, the vector is treated as a direction vector.
+     * - If a Mat3 is provided, the vector is treated as a point vector with homogeneous coordinate w=1.
+     *
+     * @param {Mat2|Mat3} matrix - The matrix to transform the vector with.
+     * @returns {Vec2} The transformed vector (this instance).
+     * @throws {TypeError} If the provided matrix is not a Mat2 or Mat3 instance.
      */
     transform(matrix) {
-        if (!(matrix instanceof Mat3)) {
-            throw new TypeError(
-                'Parameter "matrix" must be an instance of Mat3.'
-            );
-        }
-        const x = this.x;
-        const y = this.y;
-        const e = matrix.elements;
-        const tx = e[0] * x + e[3] * y + e[6];
-        const ty = e[1] * x + e[4] * y + e[7];
-        const tz = e[2] * x + e[5] * y + e[8];
-        if (tz !== 0 && tz !== 1) {
-            this.x = tx / tz;
-            this.y = ty / tz;
+        if (matrix instanceof Mat2) {
+            const e = matrix.elements;
+
+            const tX = e[0] * this.x + e[2] * this.y;
+            const tY = e[1] * this.x + e[3] * this.y;
+
+            this.x = tX;
+            this.y = tY;
+        } else if (matrix instanceof Mat3) {
+            const e = matrix.elements;
+
+            const tX = e[0] * this.x + e[3] * this.y + e[6] * 1;
+            const tY = e[1] * this.x + e[4] * this.y + e[7] * 1;
+
+            this.x = tX;
+            this.y = tY;
         } else {
-            this.x = tx;
-            this.y = ty;
+            throw new TypeError("Matrix must be an instance of Mat2 or Mat3");
         }
+
         return this;
     }
 
     /**
-     * Projects this vector onto another vector.
-     * @param {Vec2} target - The target vector to project onto.
-     * @returns {Vec2} This instance for chaining.
+     * Creates a clone of this vector.
+     *
+     * @returns {Vec2} A new Vec2 instance with the same components as this vector.
      */
-    projectOnVector(target) {
-        if (!(target instanceof Vec2)) {
-            throw new TypeError(
-                'Parameter "target" must be an instance of Vec2.'
-            );
-        }
-        const targetLenSq = target.lengthSquared();
-        if (targetLenSq === 0) {
-            throw new Error("Cannot project onto a zero-length vector.");
-        }
-        const scalar = this.dot(target) / targetLenSq;
-        this.x = target.x * scalar;
-        this.y = target.y * scalar;
-        return this;
-    }
-
-    /**
-     * Reflects the vector around a given normal.
-     * @param {Vec2} normal - The normal vector to reflect around.
-     * @returns {Vec2} This instance for chaining.
-     */
-    reflect(normal) {
-        if (!(normal instanceof Vec2)) {
-            throw new TypeError(
-                'Parameter "normal" must be an instance of Vec2.'
-            );
-        }
-        const lenSq = normal.lengthSquared();
-        if (lenSq === 0) {
-            throw new Error("Normal vector cannot be zero-length.");
-        }
-        const dotProduct = this.dot(normal);
-        this.x = this.x - 2 * (dotProduct / lenSq) * normal.x;
-        this.y = this.y - 2 * (dotProduct / lenSq) * normal.y;
-        return this;
-    }
-
-    /**
-     * Returns the angle between this vector and the positive X-axis.
-     * @returns {number} The angle in radians.
-     */
-    angle() {
-        return Math.atan2(this.y, this.x);
-    }
-
-    /**
-     * Rotates the vector by a given angle (in radians).
-     * @param {number} angle - The angle to rotate by in radians.
-     * @returns {Vec2} This instance for chaining.
-     */
-    rotate(angle) {
-        if (typeof angle !== "number") {
-            throw new TypeError('Parameter "angle" must be a number.');
-        }
-        const cos = Math.cos(angle);
-        const sin = Math.sin(angle);
-        const x = this.x * cos - this.y * sin;
-        const y = this.x * sin + this.y * cos;
-        this.x = x;
-        this.y = y;
-        return this;
-    }
-
-    /**
-     * Checks if this vector equals another vector.
-     * @param {Vec2} other - Vector to compare with.
-     * @returns {boolean} True if equal, false otherwise.
-     */
-    equals(other) {
-        if (!(other instanceof Vec2)) {
-            return false;
-        }
-        return this.x === other.x && this.y === other.y;
-    }
-
-    /**
-     * Sets each component to the minimum of itself and the corresponding component of another vector.
-     * @param {Vec2} other - Vector to compare with.
-     * @returns {Vec2} This instance for chaining.
-     */
-    min(other) {
-        if (!(other instanceof Vec2)) {
-            throw new TypeError(
-                'Parameter "other" must be an instance of Vec2.'
-            );
-        }
-        this.x = Math.min(this.x, other.x);
-        this.y = Math.min(this.y, other.y);
-        return this;
-    }
-
-    /**
-     * Sets each component to the maximum of itself and the corresponding component of another vector.
-     * @param {Vec2} other - Vector to compare with.
-     * @returns {Vec2} This instance for chaining.
-     */
-    max(other) {
-        if (!(other instanceof Vec2)) {
-            throw new TypeError(
-                'Parameter "other" must be an instance of Vec2.'
-            );
-        }
-        this.x = Math.max(this.x, other.x);
-        this.y = Math.max(this.y, other.y);
-        return this;
-    }
-
-    /**
-     * Clamps this vector's components between the components of minVec and maxVec.
-     * @param {Vec2} minVec - The minimum vector.
-     * @param {Vec2} maxVec - The maximum vector.
-     * @returns {Vec2} This instance for chaining.
-     */
-    clamp(minVec, maxVec) {
-        if (!(minVec instanceof Vec2) || !(maxVec instanceof Vec2)) {
-            throw new TypeError(
-                'Parameters "minVec" and "maxVec" must be instances of Vec2.'
-            );
-        }
-        this.x = Math.max(minVec.x, Math.min(maxVec.x, this.x));
-        this.y = Math.max(minVec.y, Math.min(maxVec.y, this.y));
-        return this;
-    }
-
-    /**
-     * Sets the length of this vector to the given value.
-     * @param {number} length - The desired length.
-     * @returns {Vec2} This instance for chaining.
-     */
-    setLength(length) {
-        if (typeof length !== "number") {
-            throw new TypeError('Parameter "length" must be a number.');
-        }
-        this.normalize();
-        this.multiplyScalar(length);
-        return this;
-    }
-
-    /**
-     * Converts this vector to an array.
-     * @returns {number[]} An array containing the x and y components.
-     */
-    toArray() {
-        return [this.x, this.y];
-    }
-
-    /**
-     * Sets the components of this vector from an array.
-     * @param {number[]} array - Array containing at least two numbers.
-     * @returns {Vec2} This instance for chaining.
-     * @throws {TypeError} If the input is not an array of numbers.
-     * @throws {RangeError} If the array does not contain at least two elements.
-     */
-    fromArray(array) {
-        if (!Array.isArray(array)) {
-            throw new TypeError('Parameter "array" must be an array.');
-        }
-        if (array.length < 2) {
-            throw new RangeError("Array must contain at least two elements.");
-        }
-        const [x, y] = array;
-        if (typeof x !== "number" || typeof y !== "number") {
-            throw new TypeError("Array elements must be numbers.");
-        }
-        this.x = x;
-        this.y = y;
-        return this;
+    clone() {
+        return new Vec2(this.x, this.y);
     }
 
     /**
      * Returns a string representation of the vector.
-     * @returns {string} The string representation.
+     *
+     * @returns {string} A string in the format "Vec2(x, y)".
      */
     toString() {
         return `Vec2(${this.x}, ${this.y})`;
     }
 
     /**
-     * Adds two vectors and returns a new vector.
-     * @param {Vec2} v1 - First vector.
-     * @param {Vec2} v2 - Second vector.
-     * @returns {Vec2} New Vec2 instance representing the sum.
-     * @throws {TypeError} If either parameter is not an instance of Vec2.
+     * Calculates the dot product of this vector with another vector.
+     *
+     * The dot product is a scalar value that is a measure of the vectors'
+     * magnitude and the cosine of the angle between them.
+     *
+     * @param {Vec2} vector - The other vector to compute the dot product with.
+     * @returns {number} The dot product of the two vectors.
+     * @throws {TypeError} If the provided vector is not an instance of Vec2.
      */
-    static add(v1, v2) {
-        if (!(v1 instanceof Vec2) || !(v2 instanceof Vec2)) {
-            throw new TypeError(
-                'Parameters "v1" and "v2" must be instances of Vec2.'
-            );
-        }
-        return new Vec2(v1.x + v2.x, v1.y + v2.y);
+    dot(vector) {
+        validateVector2(vector);
+        return this.x * vector.x + this.y * vector.y;
     }
 
     /**
-     * Subtracts v2 from v1 and returns a new vector.
-     * @param {Vec2} v1 - First vector.
-     * @param {Vec2} v2 - Second vector.
-     * @returns {Vec2} New Vec2 instance representing the difference.
-     * @throws {TypeError} If either parameter is not an instance of Vec2.
+     * Calculates the perpendicular (2D cross product) of this vector with another vector.
+     *
+     * In 2D, the cross product results in a scalar representing the magnitude
+     * of the vector perpendicular to the plane.
+     *
+     * @param {Vec2} vector - The other vector to compute the perpendicular product with.
+     * @returns {number} The scalar perpendicular product of the two vectors.
+     * @throws {TypeError} If the provided vector is not an instance of Vec2.
      */
-    static subtract(v1, v2) {
-        if (!(v1 instanceof Vec2) || !(v2 instanceof Vec2)) {
-            throw new TypeError(
-                'Parameters "v1" and "v2" must be instances of Vec2.'
-            );
-        }
-        return new Vec2(v1.x - v2.x, v1.y - v2.y);
+    cross(vector) {
+        validateVector2(vector);
+        return this.x * vector.y - this.y * vector.x;
     }
 
     /**
-     * Multiplies two vectors component-wise and returns a new vector.
-     * @param {Vec2} v1 - First vector.
-     * @param {Vec2} v2 - Second vector.
-     * @returns {Vec2} New Vec2 instance representing the product.
-     * @throws {TypeError} If either parameter is not an instance of Vec2.
+     * Normalizes the vector to have a length of 1.
+     *
+     * If the vector is a zero vector (length of 0), an error is thrown.
+     *
+     * @returns {Vec2} The normalized vector (this instance).
+     * @throws {Error} If attempting to normalize a zero-length vector.
      */
-    static multiply(v1, v2) {
-        if (!(v1 instanceof Vec2) || !(v2 instanceof Vec2)) {
-            throw new TypeError(
-                'Parameters "v1" and "v2" must be instances of Vec2.'
-            );
-        }
-        return new Vec2(v1.x * v2.x, v1.y * v2.y);
+    normalize() {
+        const len = this.length;
+        validateNonZero(len, "Cannot normalize a zero length vector");
+
+        this.x /= len;
+        this.y /= len;
+        return this;
     }
 
     /**
-     * Divides v1 by v2 component-wise and returns a new vector.
-     * @param {Vec2} v1 - Numerator vector.
-     * @param {Vec2} v2 - Denominator vector.
-     * @returns {Vec2} New Vec2 instance representing the quotient.
-     * @throws {TypeError} If either parameter is not an instance of Vec2.
-     * @throws {Error} If division by zero occurs.
+     * Calculates the Euclidean distance between this vector and another vector.
+     *
+     * @param {Vec2} vector - The other vector to calculate the distance to.
+     * @returns {number} The Euclidean distance between the two vectors.
+     * @throws {TypeError} If the provided vector is not an instance of Vec2.
      */
-    static divide(v1, v2) {
-        if (!(v1 instanceof Vec2) || !(v2 instanceof Vec2)) {
-            throw new TypeError(
-                'Parameters "v1" and "v2" must be instances of Vec2.'
-            );
-        }
-        if (v2.x === 0 || v2.y === 0) {
-            throw new Error("Division by zero.");
-        }
-        return new Vec2(v1.x / v2.x, v1.y / v2.y);
-    }
-
-    /**
-     * Multiplies a vector by a scalar and returns a new vector.
-     * @param {Vec2} v - The vector to multiply.
-     * @param {number} scalar - The scalar to multiply with.
-     * @returns {Vec2} New Vec2 instance representing the product.
-     * @throws {TypeError} If the first parameter is not an instance of Vec2 or the scalar is not a number.
-     */
-    static multiplyScalar(v, scalar) {
-        if (!(v instanceof Vec2)) {
-            throw new TypeError('Parameter "v" must be an instance of Vec2.');
-        }
-        if (typeof scalar !== "number") {
-            throw new TypeError('Parameter "scalar" must be a number.');
-        }
-        return new Vec2(v.x * scalar, v.y * scalar);
-    }
-
-    /**
-     * Divides a vector by a scalar and returns a new vector.
-     * @param {Vec2} v - The vector to divide.
-     * @param {number} scalar - The scalar to divide by.
-     * @returns {Vec2} New Vec2 instance representing the quotient.
-     * @throws {TypeError} If the first parameter is not an instance of Vec2 or the scalar is not a number.
-     * @throws {Error} If division by zero occurs.
-     */
-    static divideScalar(v, scalar) {
-        if (!(v instanceof Vec2)) {
-            throw new TypeError('Parameter "v" must be an instance of Vec2.');
-        }
-        if (typeof scalar !== "number") {
-            throw new TypeError('Parameter "scalar" must be a number.');
-        }
-        if (scalar === 0) {
-            throw new Error("Division by zero.");
-        }
-        return new Vec2(v.x / scalar, v.y / scalar);
-    }
-
-    /**
-     * Returns the negation of a vector.
-     * @param {Vec2} v - The vector to negate.
-     * @returns {Vec2} New Vec2 instance representing the negated vector.
-     * @throws {TypeError} If the parameter is not an instance of Vec2.
-     */
-    static negate(v) {
-        if (!(v instanceof Vec2)) {
-            throw new TypeError('Parameter "v" must be an instance of Vec2.');
-        }
-        return new Vec2(-v.x, -v.y);
-    }
-
-    /**
-     * Normalizes a vector and returns a new vector.
-     * @param {Vec2} v - The vector to normalize.
-     * @returns {Vec2} New Vec2 instance representing the normalized vector.
-     * @throws {TypeError} If the parameter is not an instance of Vec2.
-     * @throws {Error} If the vector length is zero.
-     */
-    static normalize(v) {
-        if (!(v instanceof Vec2)) {
-            throw new TypeError('Parameter "v" must be an instance of Vec2.');
-        }
-        const len = v.length();
-        if (len === 0) {
-            throw new Error("Cannot normalize a zero-length vector.");
-        }
-        return Vec2.divideScalar(v, len);
-    }
-
-    /**
-     * Calculates the dot product of two vectors.
-     * @param {Vec2} v1 - First vector.
-     * @param {Vec2} v2 - Second vector.
-     * @returns {number} The dot product.
-     * @throws {TypeError} If either parameter is not an instance of Vec2.
-     */
-    static dot(v1, v2) {
-        if (!(v1 instanceof Vec2) || !(v2 instanceof Vec2)) {
-            throw new TypeError(
-                'Parameters "v1" and "v2" must be instances of Vec2.'
-            );
-        }
-        return v1.x * v2.x + v1.y * v2.y;
-    }
-
-    /**
-     * Computes the distance between two vectors.
-     * @param {Vec2} v1 - First vector.
-     * @param {Vec2} v2 - Second vector.
-     * @returns {number} The distance.
-     * @throws {TypeError} If either parameter is not an instance of Vec2.
-     */
-    static distance(v1, v2) {
-        if (!(v1 instanceof Vec2) || !(v2 instanceof Vec2)) {
-            throw new TypeError(
-                'Parameters "v1" and "v2" must be instances of Vec2.'
-            );
-        }
-        const dx = v1.x - v2.x;
-        const dy = v1.y - v2.y;
+    distanceTo(vector) {
+        validateVector2(vector);
+        const dx = this.x - vector.x;
+        const dy = this.y - vector.y;
         return Math.sqrt(dx * dx + dy * dy);
     }
 
     /**
-     * Computes the squared distance between two vectors.
-     * @param {Vec2} v1 - First vector.
-     * @param {Vec2} v2 - Second vector.
-     * @returns {number} The squared distance.
-     * @throws {TypeError} If either parameter is not an instance of Vec2.
+     * Calculates the length (magnitude) of the vector.
+     *
+     * @returns {number} The length of the vector.
+     * @readonly
      */
-    static distanceSquared(v1, v2) {
-        if (!(v1 instanceof Vec2) || !(v2 instanceof Vec2)) {
-            throw new TypeError(
-                'Parameters "v1" and "v2" must be instances of Vec2.'
-            );
-        }
-        const dx = v1.x - v2.x;
-        const dy = v1.y - v2.y;
-        return dx * dx + dy * dy;
+    get length() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
     /**
-     * Calculates the angle between two vectors (in radians).
-     * @param {Vec2} v1 - First vector.
-     * @param {Vec2} v2 - Second vector.
-     * @returns {number} The angle in radians.
-     * @throws {TypeError} If either parameter is not an instance of Vec2.
-     * @throws {Error} If either vector has zero length.
+     * Sets the length (magnitude) of the vector.
+     *
+     * @param {number} newLength - The desired length of the vector.
+     * @throws {Error} If attempting to set length on a zero vector.
      */
-    static angleBetween(v1, v2) {
-        if (!(v1 instanceof Vec2) || !(v2 instanceof Vec2)) {
-            throw new TypeError(
-                'Parameters "v1" and "v2" must be instances of Vec2.'
-            );
-        }
-        const len1 = v1.length();
-        const len2 = v2.length();
-        if (len1 === 0 || len2 === 0) {
-            throw new Error("Cannot calculate angle with zero-length vector.");
-        }
-        const dotProd = Vec2.dot(v1, v2);
-        const cosTheta = dotProd / (len1 * len2);
-        // Clamp to handle numerical inaccuracies
-        return Math.acos(Math.max(-1, Math.min(1, cosTheta)));
+    set length(newLength) {
+        const currentLength = this.length;
+
+        validateNonZero(currentLength, "Cannot set length of a zero vector");
+
+        const scale = newLength / currentLength;
+
+        this.x *= scale;
+        this.y *= scale;
+    }
+
+    // Static methods
+
+    /**
+     * Adds two vectors and returns a new vector without modifying the originals.
+     *
+     * @param {Vec2} a - The first vector.
+     * @param {Vec2} b - The second vector.
+     * @returns {Vec2} A new Vec2 instance representing the sum.
+     * @throws {TypeError} If either a or b is not an instance of Vec2.
+     */
+    static add(a, b) {
+        validateVector2(a);
+        validateVector2(b);
+        return new Vec2(a.x + b.x, a.y + b.y);
     }
 
     /**
-     * Linearly interpolates between two vectors by factor t and returns a new vector.
-     * @param {Vec2} v1 - Starting vector.
-     * @param {Vec2} v2 - Ending vector.
-     * @param {number} t - Interpolation factor (0 <= t <= 1).
-     * @returns {Vec2} New Vec2 instance representing the interpolated vector.
-     * @throws {TypeError} If parameters are of incorrect types.
+     * Subtracts the second vector from the first and returns a new vector without modifying the originals.
+     *
+     * @param {Vec2} a - The vector to subtract from.
+     * @param {Vec2} b - The vector to subtract.
+     * @returns {Vec2} A new Vec2 instance representing the difference.
+     * @throws {TypeError} If either a or b is not an instance of Vec2.
      */
-    static lerp(v1, v2, t) {
-        if (!(v1 instanceof Vec2) || !(v2 instanceof Vec2)) {
-            throw new TypeError(
-                'Parameters "v1" and "v2" must be instances of Vec2.'
-            );
-        }
-        if (typeof t !== "number") {
-            throw new TypeError('Parameter "t" must be a number.');
-        }
-        return new Vec2(v1.x + (v2.x - v1.x) * t, v1.y + (v2.y - v1.y) * t);
+    static subtract(a, b) {
+        validateVector2(a);
+        validateVector2(b);
+        return new Vec2(a.x - b.x, a.y - b.y);
     }
 
     /**
-     * Projects vector v onto target.
-     * @param {Vec2} v - The vector to project.
-     * @param {Vec2} target - The target vector to project onto.
-     * @returns {Vec2} New Vec2 instance representing the projection.
-     * @throws {TypeError} If parameters are of incorrect types.
-     * @throws {Error} If the target vector has zero length.
+     * Multiplies the provided vector by a scalar.
+     *
+     * @param {Vec2} vector - The vector to multiply.
+     * @param {number} scalar - The scalar to multiply by.
+     * @returns {Vec2} The new vector.
+     * @throws {TypeError} If the provided vector is not an instance of Vec2 or scalar is not a number.
      */
-    static projectOnVector(v, target) {
-        if (!(v instanceof Vec2) || !(target instanceof Vec2)) {
-            throw new TypeError(
-                'Parameters "v" and "target" must be instances of Vec2.'
-            );
-        }
-        const targetLenSq = target.lengthSquared();
-        if (targetLenSq === 0) {
-            throw new Error("Cannot project onto a zero-length vector.");
-        }
-        const scalar = Vec2.dot(v, target) / targetLenSq;
-        return new Vec2(target.x * scalar, target.y * scalar);
+    static multiplyScalar(vector, scalar) {
+        validateVector2(vector);
+        validateNumber(scalar, "scalar");
+
+        return new Vec2(vector.x * scalar, vector.y * scalar);
     }
 
     /**
-     * Reflects vector v around a given normal.
-     * @param {Vec2} v - The vector to reflect.
-     * @param {Vec2} normal - The normal vector to reflect around.
-     * @returns {Vec2} New Vec2 instance representing the reflected vector.
-     * @throws {TypeError} If parameters are of incorrect types.
-     * @throws {Error} If the normal vector has zero length.
+     * Calculates the dot product of two vectors.
+     *
+     * @param {Vec2} a - The first vector.
+     * @param {Vec2} b - The second vector.
+     * @returns {number} The dot product of vectors a and b.
+     * @throws {TypeError} If either a or b is not an instance of Vec2.
      */
-    static reflect(v, normal) {
-        if (!(v instanceof Vec2) || !(normal instanceof Vec2)) {
-            throw new TypeError(
-                'Parameters "v" and "normal" must be instances of Vec2.'
-            );
-        }
-        const lenSq = normal.lengthSquared();
-        if (lenSq === 0) {
-            throw new Error("Normal vector cannot be zero-length.");
-        }
-        const dotProduct = Vec2.dot(v, normal);
-        const reflectedX = v.x - 2 * (dotProduct / lenSq) * normal.x;
-        const reflectedY = v.y - 2 * (dotProduct / lenSq) * normal.y;
-        return new Vec2(reflectedX, reflectedY);
+    static dot(a, b) {
+        validateVector2(a);
+        validateVector2(b);
+        return a.x * b.x + a.y * b.y;
     }
 
     /**
-     * Creates a vector from an array.
-     * @param {number[]} array - Array containing at least two numbers.
-     * @returns {Vec2} New Vec2 instance.
-     * @throws {TypeError} If the input is not an array of numbers.
-     * @throws {RangeError} If the array does not contain at least two elements.
+     * Calculates the perpendicular (2D cross product) of two vectors.
+     *
+     * @param {Vec2} a - The first vector.
+     * @param {Vec2} b - The second vector.
+     * @returns {number} The scalar perpendicular product of vectors a and b.
+     * @throws {TypeError} If either a or b is not an instance of Vec2.
      */
-    static fromArray(array) {
-        const vec = new Vec2();
-        vec.fromArray(array);
-        return vec;
+    static cross(a, b) {
+        validateVector2(a);
+        validateVector2(b);
+        return a.x * b.y - a.y * b.x;
     }
 
     /**
-     * Creates a vector from an object with relevant component properties.
-     * @param {Object} object - Object containing x and y properties.
-     * @returns {Vec2} New Vec2 instance.
-     * @throws {TypeError} If the input is not an object or lacks x and y properties.
+     * Linearly interpolates between two vectors by a factor t and returns a new vector.
+     *
+     * @param {Vec2} a - The starting vector.
+     * @param {Vec2} b - The ending vector.
+     * @param {number} t - The interpolation factor (0 <= t <= 1).
+     * @returns {Vec2} A new Vec2 instance representing the interpolated vector.
+     * @throws {TypeError} If a or b is not an instance of Vec2 or if t is not a number.
+     * @throws {RangeError} If t is not between 0 and 1.
      */
-    static fromObject(object) {
-        if (typeof object !== "object" || object === null) {
-            throw new TypeError(
-                'Parameter "object" must be a non-null object.'
-            );
-        }
-        const { x, y } = object;
-        if (typeof x !== "number" || typeof y !== "number") {
-            throw new TypeError(
-                'Object properties "x" and "y" must be numbers.'
-            );
-        }
-        return new Vec2(x, y);
+    static lerp(a, b, t) {
+        validateVector2(a);
+        validateVector2(b);
+        validateNumber(t, "interpolation factor");
+        validateRange(t, { msg: "Interpolation factor t" });
+
+        return new Vec2(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
     }
 
     /**
-     * Performs Catmull-Rom spline interpolation.
-     * @param {Vec2} v0 - Previous vector.
-     * @param {Vec2} v1 - Current vector.
-     * @param {Vec2} v2 - Next vector.
-     * @param {Vec2} v3 - Next-next vector.
-     * @param {number} t - Interpolation factor (0 <= t <= 1).
-     * @returns {Vec2} New Vec2 instance representing the interpolated vector.
-     * @throws {TypeError} If parameters are of incorrect types.
+     * Creates a new vector by applying a transformation matrix to an existing vector.
+     *
+     * - If a Mat2 is provided, the vector is treated as a direction vector.
+     * - If a Mat3 is provided, the vector is treated as a point vector with homogeneous coordinate w=1.
+     *
+     * @param {Vec2} vector - The vector to transform. Must be a Vec2 instance.
+     * @param {Mat2|Mat3} matrix - The matrix to transform the vector with.
+     * @returns {Vec2} A new Vec2 instance representing the transformed vector.
+     * @throws {TypeError} If the provided vector is not a Vec2 instance or if the matrix is not a Mat2 or Mat3 instance.
      */
-    static catmullRom(v0, v1, v2, v3, t) {
-        if (
-            !(v0 instanceof Vec2) ||
-            !(v1 instanceof Vec2) ||
-            !(v2 instanceof Vec2) ||
-            !(v3 instanceof Vec2)
-        ) {
-            throw new TypeError(
-                'Parameters "v0", "v1", "v2", and "v3" must be instances of Vec2.'
-            );
-        }
-        if (typeof t !== "number") {
-            throw new TypeError('Parameter "t" must be a number.');
-        }
-        const t2 = t * t;
-        const t3 = t2 * t;
-
-        const x =
-            0.5 *
-            (2 * v1.x +
-                (-v0.x + v2.x) * t +
-                (2 * v0.x - 5 * v1.x + 4 * v2.x - v3.x) * t2 +
-                (-v0.x + 3 * v1.x - 3 * v2.x + v3.x) * t3);
-
-        const y =
-            0.5 *
-            (2 * v1.y +
-                (-v0.y + v2.y) * t +
-                (2 * v0.y - 5 * v1.y + 4 * v2.y - v3.y) * t2 +
-                (-v0.y + 3 * v1.y - 3 * v2.y + v3.y) * t3);
-
-        return new Vec2(x, y);
+    static fromTransform(vector, matrix) {
+        validateVector2(vector);
+        return vector.clone().transform(matrix);
     }
 }
 
