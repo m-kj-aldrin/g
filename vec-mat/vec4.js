@@ -430,14 +430,34 @@ class Vec4 {
      * Calculates the length (magnitude) of the vector.
      *
      * @returns {number} The length of the vector.
+     * @readonly
      */
-    length() {
+    get length() {
         return Math.sqrt(
             this.x * this.x +
                 this.y * this.y +
                 this.z * this.z +
                 this.w * this.w
         );
+    }
+
+    /**
+     * Sets the length (magnitude) of the vector.
+     *
+     * @param {number} newLength - The desired length of the vector.
+     * @throws {Error} If attempting to set length on a zero vector.
+     */
+    set length(newLength) {
+        const currentLength = this.length;
+
+        validateNonZero(currentLength, "Cannot set length of a zero vector");
+
+        const scale = newLength / currentLength;
+
+        this.x *= scale;
+        this.y *= scale;
+        this.z *= scale;
+        this.w *= scale;
     }
 
     // Static methods

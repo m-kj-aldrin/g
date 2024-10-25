@@ -30,7 +30,7 @@ class Mat4 {
      * @param {Float32Array | number[]} elements matrix elements in row-major
      */
     set elements(elements) {
-        validateArray(elements, "elements");
+        validateArray(elements, 16, "elements");
 
         for (let i = 0; i < 16; i++) {
             validateNumber(elements[i], `Element at index ${i}`);

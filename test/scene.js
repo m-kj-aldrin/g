@@ -1,10 +1,14 @@
-import { Mat4, Vec3, Vec4 } from "../main.js";
+import { Mat3, Mat4, Vec3, Vec4 } from "../main.js";
 
 let normal = new Vec3(1, 0, 0);
 
-let rotationMatrix = Mat4.fromAxisAngle(new Vec3(0, 0, 1), Math.PI / 4);
+let rotationMatrix = Mat3.fromAxisAngle(new Vec3(0, 0, 1), Math.PI / 2);
 
+normal.transform(rotationMatrix);
 
+// normal.length = 3;
+
+console.log(normal.toString());
 
 // let sM = Mat4.fromScaling(new Vec3());
 // let rM = Mat4.fromAxisAngle([1, 0, 0], Math.PI / 2);

@@ -1,3 +1,4 @@
+import Mat3 from "./mat3.js";
 import Mat4 from "./mat4.js";
 import Vec3 from "./vec3.js";
 import Vec4 from "./vec4.js";
@@ -55,16 +56,25 @@ export function validateMat4(mat, msg = "matrix") {
         throw new TypeError(`${msg} must be an instance of Mat4.`);
     }
 }
+/**
+ * @param {Mat3} mat
+ * @param {string} [msg]
+ */
+export function validateMat3(mat, msg = "matrix") {
+    if (!(mat instanceof Mat3)) {
+        throw new TypeError(`${msg} must be an instance of Mat3.`);
+    }
+}
 
 /**
  * @param {Float32Array | number[]} array
  * @param {string} [msg]
  *  */
-export function validateArray(array, msg = "array") {
+export function validateArray(array, len = 1, msg = "array") {
     if (!(array instanceof Array || array instanceof Float32Array)) {
         throw new TypeError(`${msg} must be an Array or Float32Array.`);
     }
-    if (array.length !== 16) {
+    if (array.length !== len) {
         throw new RangeError(`${msg} array must have 16 elements.`);
     }
 }
