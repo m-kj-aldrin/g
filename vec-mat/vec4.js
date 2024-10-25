@@ -494,6 +494,33 @@ class Vec4 {
     }
 
     /**
+     * Linearly interpolates between two vectors by a factor t and returns a new vector.
+     *
+     * @param {Vec4} a - The starting vector.
+     * @param {Vec4} b - The ending vector.
+     * @param {number} t - The interpolation factor (0 <= t <= 1).
+     * @returns {Vec4} A new Vec4 instance representing the interpolated vector.
+     * @throws {TypeError} If a or b is not an instance of Vec4 or if t is not a number.
+     * @throws {RangeError} If t is not between 0 and 1.
+     */
+    static lerp(a, b, t) {
+        validateVector4(a);
+        validateVector4(b);
+        validateNumber(t, "interpolation factor");
+        if (t < 0 || t > 1) {
+            throw new RangeError(
+                "Interpolation factor t must be between 0 and 1"
+            );
+        }
+        return new Vec4(
+            a.x + (b.x - a.x) * t,
+            a.y + (b.y - a.y) * t,
+            a.z + (b.z - a.z) * t,
+            a.w + (b.w - a.w) * t
+        );
+    }
+
+    /**
      * Creates a new vector by applying a transformation matrix to an existing vector.
      *
      * This method does not modify the original vector but returns a new transformed vector.
