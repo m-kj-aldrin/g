@@ -255,6 +255,47 @@ class Vec4 {
     }
 
     /**
+     * Linearly interpolates between this vector and another vector by a factor t.
+     *
+     * @param {Vec4} vector - The target vector to interpolate towards.
+     * @param {number} t - The interpolation factor (0 <= t <= 1).
+     * @returns {Vec4} The interpolated vector (this instance).
+     * @throws {TypeError} If the provided vector is not an instance of Vec4 or if t is not a number.
+     * @throws {RangeError} If t is not between 0 and 1.
+     */
+    lerp(vector, t) {
+        validateVector4(vector);
+        validateNumber(t, "interpolation factor");
+        if (t < 0 || t > 1) {
+            throw new RangeError(
+                "Interpolation factor t must be between 0 and 1"
+            );
+        }
+        this.x += (vector.x - this.x) * t;
+        this.y += (vector.y - this.y) * t;
+        this.z += (vector.z - this.z) * t;
+        this.w += (vector.w - this.w) * t;
+        return this;
+    }
+
+    /**
+     * Checks if this vector is equal to another vector.
+     *
+     * @param {Vec4} vector - The other vector to compare with.
+     * @returns {boolean} True if all components are equal, otherwise false.
+     * @throws {TypeError} If the provided vector is not an instance of Vec4.
+     */
+    equals(vector) {
+        validateVector4(vector);
+        return (
+            this.x === vector.x &&
+            this.y === vector.y &&
+            this.z === vector.z &&
+            this.w === vector.w
+        );
+    }
+
+    /**
      * Multiplies this vector by a 4x4 matrix.
      *
      * This operation transforms the vector by the given matrix.
