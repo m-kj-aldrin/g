@@ -1,7 +1,6 @@
 import Mat4 from "./mat4.js";
 
 import {
-    getVectorComponents4,
     validateMat4,
     validateNonZero,
     validateNumber,
@@ -362,12 +361,8 @@ class Vec4 {
     /**
      * Calculates the cross product of this vector with another vector.
      *
-     * **Note:** The cross product is traditionally defined for three-dimensional vectors.
-     * In this implementation, the w-component is ignored, and the resulting vector's w-component
-     * is set to 0.
-     *
      * @param {Vec4} vector - The other vector to compute the cross product with.
-     * @returns {Vec4} A new Vec4 instance representing the cross product.
+     * @returns {Vec4} The updated vector (this instance) after cross product.
      * @throws {TypeError} If the provided vector is not an instance of Vec4.
      */
     cross(vector) {
@@ -375,8 +370,11 @@ class Vec4 {
         const crossX = this.y * vector.z - this.z * vector.y;
         const crossY = this.z * vector.x - this.x * vector.z;
         const crossZ = this.x * vector.y - this.y * vector.x;
-        // Set w to 0 as it's not defined in the traditional cross product
-        return new Vec4(crossX, crossY, crossZ, 0);
+        this.x = crossX;
+        this.y = crossY;
+        this.z = crossZ;
+        this.w = 0; // Consistent with the original intention
+        return this;
     }
 
     /**
@@ -459,6 +457,26 @@ class Vec4 {
     }
 
     /**
+     * Multiplies the provided vector by a scalar.
+     *
+     * @param {Vec4} vector - The vector to multiply from.
+     * @param {number} scalar - The scalar to multiply by.
+     * @returns {Vec4} The new vector.
+     * @throws {TypeError} If the provided vector is not an instance of Vec4 or scalar is not a number.
+     */
+    static multiplyScalar(vector, scalar) {
+        validateVector4(vector);
+        validateNumber(scalar, "scalar");
+
+        return new Vec4(
+            vector.x * scalar,
+            vector.y * scalar,
+            vector.z * scalar,
+            vector.w * scalar
+        );
+    }
+
+    /**
      * Calculates the dot product of two vectors.
      *
      * @param {Vec4} a - The first vector.
@@ -507,11 +525,8 @@ class Vec4 {
         validateVector4(a);
         validateVector4(b);
         validateNumber(t, "interpolation factor");
-        if (t < 0 || t > 1) {
-            throw new RangeError(
-                "Interpolation factor t must be between 0 and 1"
-            );
-        }
+        validateRange(t, { msg: "Interpolation factor t" });
+
         return new Vec4(
             a.x + (b.x - a.x) * t,
             a.y + (b.y - a.y) * t,
@@ -525,25 +540,16 @@ class Vec4 {
      *
      * This method does not modify the original vector but returns a new transformed vector.
      *
-     * @param {Vec4 | [number, number, number, number]} vector - The vector to transform. Can be a Vec4 instance or an array of four numbers.
+     * @param {Vec4} vector - The vector to transform. Must be a Vec4 instance.
      * @param {Mat4} matrix - The 4x4 transformation matrix to apply.
      * @returns {Vec4} A new Vec4 instance representing the transformed vector.
-     * @throws {TypeError} If the provided vector is not a Vec4 instance or a valid 4-number array, or if the matrix is not a Mat4 instance.
+     * @throws {TypeError} If the provided vector is not a Vec4 instance or if the matrix is not a Mat4 instance.
      */
     static fromTransform(vector, matrix) {
         validateVector4(vector);
         validateMat4(matrix);
 
-        let result;
-
-        if (vector instanceof Vec4) {
-            result = vector.clone();
-        } else if (Array.isArray(vector) && vector.length === 4) {
-            const { x, y, z, w } = getVectorComponents4(vector);
-            result = new Vec4(x, y, z, w);
-        }
-
-        return result.transform(matrix);
+        return vector.clone().transform(matrix);
     }
 }
 
