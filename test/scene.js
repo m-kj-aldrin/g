@@ -13,4 +13,3 @@ let model_v0 = Vec4.fromTransform([0, 1, 0, 1], modelM);
 console.log(model_v0.toString());
 
 console.log(model_v0.length());
-

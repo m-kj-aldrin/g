@@ -7,64 +7,215 @@ import {
     validateVector4,
 } from "./validation.js";
 
+/**
+ * Represents a four-dimensional vector.
+ *
+ * @class
+ */
 class Vec4 {
+    /**
+     * The x-component of the vector.
+     * @type {number}
+     */
     #x = 0;
+
+    /**
+     * The y-component of the vector.
+     * @type {number}
+     */
     #y = 0;
+
+    /**
+     * The z-component of the vector.
+     * @type {number}
+     */
     #z = 0;
+
+    /**
+     * The w-component of the vector.
+     * @type {number}
+     */
     #w = 1;
 
     /**
-     * Constructs a 4D vector
-     * @param {number} [x] x component defaults to 0
-     * @param {number} [y] y component defaults to 0
-     * @param {number} [z] z component defaults to 0
-     * @param {number} [w] w component defaults to 1
+     * Constructs a new Vec4 instance.
+     *
+     * @param {number} [x=0] - The x-component of the vector.
+     * @param {number} [y=0] - The y-component of the vector.
+     * @param {number} [z=0] - The z-component of the vector.
+     * @param {number} [w=1] - The w-component of the vector.
      */
-    constructor(x, y, z, w) {
-        x !== undefined && (this.x = x);
-        y !== undefined && (this.y = y);
-        z !== undefined && (this.z = z);
-        w !== undefined && (this.w = w);
-    }
-
-    get x() {
-        return this.#x;
-    }
-    set x(number) {
-        validateNumber(number, "x component");
-        this.#x = number;
-    }
-
-    get y() {
-        return this.#y;
-    }
-    set y(number) {
-        validateNumber(number, "y component");
-        this.#y = number;
-    }
-
-    get z() {
-        return this.#z;
-    }
-    set z(number) {
-        validateNumber(number, "z component");
-        this.#z = number;
-    }
-
-    get w() {
-        return this.#w;
-    }
-    set w(number) {
-        validateNumber(number, "w component");
-        this.#w = number;
+    constructor(x = 0, y = 0, z = 0, w = 1) {
+        if (x !== undefined) this.x = x;
+        if (y !== undefined) this.y = y;
+        if (z !== undefined) this.z = z;
+        if (w !== undefined) this.w = w;
     }
 
     /**
-     * Multiplies this vector with the provided matrix
-     * @param {Mat4} matrix 4x4 matrix
-     * @returns this vector
+     * Gets the x-component of the vector.
+     *
+     * @type {number}
+     * @readonly
+     */
+    get x() {
+        return this.#x;
+    }
+
+    /**
+     * Sets the x-component of the vector.
+     *
+     * @param {number} value - The new x-component value.
+     * @throws {TypeError} If the provided value is not a number.
+     */
+    set x(value) {
+        validateNumber(value, "x component");
+        this.#x = value;
+    }
+
+    /**
+     * Gets the y-component of the vector.
+     *
+     * @type {number}
+     * @readonly
+     */
+    get y() {
+        return this.#y;
+    }
+
+    /**
+     * Sets the y-component of the vector.
+     *
+     * @param {number} value - The new y-component value.
+     * @throws {TypeError} If the provided value is not a number.
+     */
+    set y(value) {
+        validateNumber(value, "y component");
+        this.#y = value;
+    }
+
+    /**
+     * Gets the z-component of the vector.
+     *
+     * @type {number}
+     * @readonly
+     */
+    get z() {
+        return this.#z;
+    }
+
+    /**
+     * Sets the z-component of the vector.
+     *
+     * @param {number} value - The new z-component value.
+     * @throws {TypeError} If the provided value is not a number.
+     */
+    set z(value) {
+        validateNumber(value, "z component");
+        this.#z = value;
+    }
+
+    /**
+     * Gets the w-component of the vector.
+     *
+     * @type {number}
+     * @readonly
+     */
+    get w() {
+        return this.#w;
+    }
+
+    /**
+     * Sets the w-component of the vector.
+     *
+     * @param {number} value - The new w-component value.
+     * @throws {TypeError} If the provided value is not a number.
+     */
+    set w(value) {
+        validateNumber(value, "w component");
+        this.#w = value;
+    }
+
+    /**
+     * Adds another vector to this vector.
+     *
+     * @param {Vec4} vector - The vector to add.
+     * @returns {Vec4} The updated vector (this instance).
+     * @throws {TypeError} If the provided vector is not an instance of Vec4.
+     */
+    add(vector) {
+        validateVector4(vector);
+        this.x += vector.x;
+        this.y += vector.y;
+        this.z += vector.z;
+        this.w += vector.w;
+        return this;
+    }
+
+    /**
+     * Subtracts another vector from this vector.
+     *
+     * @param {Vec4} vector - The vector to subtract.
+     * @returns {Vec4} The updated vector (this instance).
+     * @throws {TypeError} If the provided vector is not an instance of Vec4.
+     */
+    subtract(vector) {
+        validateVector4(vector);
+        this.x -= vector.x;
+        this.y -= vector.y;
+        this.z -= vector.z;
+        this.w -= vector.w;
+        return this;
+    }
+
+    /**
+     * Multiplies this vector by a scalar.
+     *
+     * @param {number} scalar - The scalar to multiply by.
+     * @returns {Vec4} The updated vector (this instance).
+     * @throws {TypeError} If the provided scalar is not a number.
+     */
+    multiplyScalar(scalar) {
+        validateNumber(scalar, "scalar");
+        this.x *= scalar;
+        this.y *= scalar;
+        this.z *= scalar;
+        this.w *= scalar;
+        return this;
+    }
+
+    /**
+     * Divides this vector by a scalar.
+     *
+     * @param {number} scalar - The scalar to divide by.
+     * @returns {Vec4} The updated vector (this instance).
+     * @throws {TypeError} If the provided scalar is not a number.
+     * @throws {Error} If attempting to divide by zero.
+     */
+    divideScalar(scalar) {
+        validateNumber(scalar, "scalar");
+        if (scalar === 0) {
+            throw new Error("Cannot divide by zero");
+        }
+        this.x /= scalar;
+        this.y /= scalar;
+        this.z /= scalar;
+        this.w /= scalar;
+        return this;
+    }
+
+    /**
+     * Multiplies this vector by a 4x4 matrix.
+     *
+     * This operation transforms the vector by the given matrix.
+     *
+     * @param {Mat4} matrix - The 4x4 matrix to transform the vector with.
+     * @returns {Vec4} The transformed vector (this instance).
+     * @throws {TypeError} If the provided matrix is not a Mat4 instance.
      */
     transform(matrix) {
+        validateMat4(matrix);
+
         const x = this.x;
         const y = this.y;
         const z = this.z;
@@ -81,8 +232,9 @@ class Vec4 {
     }
 
     /**
-     * Clones the vector returning a vector with equal components
-     * @returns new vector with components equal this
+     * Creates a clone of this vector.
+     *
+     * @returns {Vec4} A new Vec4 instance with the same components as this vector.
      */
     clone() {
         return new Vec4(this.x, this.y, this.z, this.w);
@@ -90,17 +242,22 @@ class Vec4 {
 
     /**
      * Returns a string representation of the vector.
-     * @returns {string} String in the format "Vec4(x, y, z, w)".
+     *
+     * @returns {string} A string in the format "Vec4(x, y, z, w)".
      */
     toString() {
         return `Vec4(${this.x}, ${this.y}, ${this.z}, ${this.w})`;
     }
 
     /**
-     * Computes the dot product with another vector
-     * @param {Vec4} vector - The other vector to dot with
-     * @returns {number} The dot product
-     * @throws {TypeError} If the input is not a Vec4 instance
+     * Calculates the dot product of this vector with another vector.
+     *
+     * The dot product is a scalar value that is a measure of the vectors'
+     * magnitude and the cosine of the angle between them.
+     *
+     * @param {Vec4} vector - The other vector to compute the dot product with.
+     * @returns {number} The dot product of the two vectors.
+     * @throws {TypeError} If the provided vector is not an instance of Vec4.
      */
     dot(vector) {
         validateVector4(vector);
@@ -113,13 +270,15 @@ class Vec4 {
     }
 
     /**
-     * Computes the cross product with another vector.
-     * Note: The cross product is traditionally defined for 3D vectors. This implementation
-     * ignores the w component and sets it to 0 in the resulting vector.
+     * Calculates the cross product of this vector with another vector.
      *
-     * @param {Vec4} vector - The other vector to cross with
-     * @returns {Vec4} The cross product vector
-     * @throws {TypeError} If the input is not a Vec4 instance
+     * **Note:** The cross product is traditionally defined for three-dimensional vectors.
+     * In this implementation, the w-component is ignored, and the resulting vector's w-component
+     * is set to 0.
+     *
+     * @param {Vec4} vector - The other vector to compute the cross product with.
+     * @returns {Vec4} A new Vec4 instance representing the cross product.
+     * @throws {TypeError} If the provided vector is not an instance of Vec4.
      */
     cross(vector) {
         validateVector4(vector);
@@ -132,10 +291,11 @@ class Vec4 {
 
     /**
      * Normalizes the vector to have a length of 1.
-     * If the vector is a zero vector, it throws an error.
      *
-     * @returns {Vec4} The normalized vector (this instance)
-     * @throws {Error} If attempting to normalize a zero-length vector
+     * If the vector is a zero vector (length of 0), an error is thrown.
+     *
+     * @returns {Vec4} The normalized vector (this instance).
+     * @throws {Error} If attempting to normalize a zero-length vector.
      */
     normalize() {
         const len = this.length();
@@ -150,11 +310,11 @@ class Vec4 {
     }
 
     /**
-     * Computes the Euclidean distance to another vector.
+     * Calculates the Euclidean distance between this vector and another vector.
      *
-     * @param {Vec4} vector - The other vector to compute distance to
-     * @returns {number} The distance between the two vectors
-     * @throws {TypeError} If the input is not a Vec4 instance
+     * @param {Vec4} vector - The other vector to calculate the distance to.
+     * @returns {number} The Euclidean distance between the two vectors.
+     * @throws {TypeError} If the provided vector is not an instance of Vec4.
      */
     distanceTo(vector) {
         validateVector4(vector);
@@ -166,9 +326,9 @@ class Vec4 {
     }
 
     /**
-     * Computes the length (magnitude) of the vector.
+     * Calculates the length (magnitude) of the vector.
      *
-     * @returns {number} The length of the vector
+     * @returns {number} The length of the vector.
      */
     length() {
         return Math.sqrt(
@@ -179,24 +339,28 @@ class Vec4 {
         );
     }
 
-    // static methods
+    // Static methods
 
     /**
-     * Returns a new vector based on a vector and a transformation matrix
-     * @param {Vec4 | [number,number,number,number]} vector
-     * @param {Mat4} matrix
-     * @returns A new vector
+     * Creates a new vector by applying a transformation matrix to an existing vector.
+     *
+     * This method does not modify the original vector but returns a new transformed vector.
+     *
+     * @param {Vec4 | [number, number, number, number]} vector - The vector to transform. Can be a Vec4 instance or an array of four numbers.
+     * @param {Mat4} matrix - The 4x4 transformation matrix to apply.
+     * @returns {Vec4} A new Vec4 instance representing the transformed vector.
+     * @throws {TypeError} If the provided vector is not a Vec4 instance or a valid 4-number array, or if the matrix is not a Mat4 instance.
      */
     static fromTransform(vector, matrix) {
         validateVector4(vector);
         validateMat4(matrix);
 
-        /**@type {Vec4} */
         let result;
+
         if (vector instanceof Vec4) {
             result = vector.clone();
-        } else {
-            let { x, y, z, w } = getVectorComponents4(vector);
+        } else if (Array.isArray(vector) && vector.length === 4) {
+            const { x, y, z, w } = getVectorComponents4(vector);
             result = new Vec4(x, y, z, w);
         }
 
