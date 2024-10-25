@@ -1,5 +1,7 @@
+import Mat2 from "./mat2.js";
 import Mat3 from "./mat3.js";
 import Mat4 from "./mat4.js";
+import Vec2 from "./vec2.js";
 import Vec3 from "./vec3.js";
 import Vec4 from "./vec4.js";
 
@@ -10,6 +12,23 @@ import Vec4 from "./vec4.js";
 export function validateNumber(number, msg = "value") {
     if (typeof number !== "number") {
         throw new TypeError(`${msg} must be of type number`);
+    }
+}
+
+/**
+ * @param {Vec2 | [number,number]} vector
+ * @param {string} [msg]
+ *  */
+export function validateVector2(vector, msg = "vector") {
+    if (!(vector instanceof Vec2)) {
+        if (
+            !vector.every((n) => typeof n === "number") ||
+            vector.length !== 2
+        ) {
+            throw new TypeError(
+                `${msg} must be of type Vec3 or [number,number,number]`
+            );
+        }
     }
 }
 
@@ -63,6 +82,15 @@ export function validateMat4(mat, msg = "matrix") {
 export function validateMat3(mat, msg = "matrix") {
     if (!(mat instanceof Mat3)) {
         throw new TypeError(`${msg} must be an instance of Mat3.`);
+    }
+}
+/**
+ * @param {Mat2} mat
+ * @param {string} [msg]
+ */
+export function validateMat2(mat, msg = "matrix") {
+    if (!(mat instanceof Mat2)) {
+        throw new TypeError(`${msg} must be an instance of Mat2.`);
     }
 }
 

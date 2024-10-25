@@ -2,8 +2,6 @@ import Mat3 from "./mat3.js";
 import Mat4 from "./mat4.js";
 
 import {
-    validateMat3,
-    validateMat4,
     validateNonZero,
     validateNumber,
     validateRange,
