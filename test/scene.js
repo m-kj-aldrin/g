@@ -1,25 +1,13 @@
-import { Vec2, Vec3, Vec4, Mat2, Mat3, Mat4 } from "../main.js";
+import { Vec2, Vec3, Vec4, Mat2, Mat3, Mat4, Quat } from "../main.js";
 
-// let normal = new Vec3(1, 0, 0);
+let v0 = new Vec3(1, 0, 0);
 
-// let rotationMatrix = Mat3.fromAxisAngle(new Vec3(0, 0, 1), Math.PI / 2);
+let sM = Mat4.fromScaling(new Vec3(1, 1, 1));
+let rM = Quat.fromAxisAngle(new Vec3(0, 0, 1), Math.PI / 2).toMat3();
+let tM = Mat4.fromTranslation(new Vec3(0, 0, 0));
 
-// normal.transform(rotationMatrix);
+let transformMatrix = Mat4.multiply(tM, rM, sM);
 
-// // normal.length = 3;
+let transformedV0 = Vec3.fromTransform(v0, transformMatrix);
 
-// console.log(normal.toString());
-
-// let sM = Mat4.fromScaling(new Vec3());
-// let rM = Mat4.fromAxisAngle([1, 0, 0], Math.PI / 2);
-// let tM = Mat4.fromTranslation([0, 0, 0]);
-
-// let modelM = Mat4.multiply(tM, rM, sM);
-
-// console.log(modelM.toString());
-
-// let model_v0 = Vec4.fromTransform([0, 1, 0, 1], modelM);
-
-// console.log(model_v0.toString());
-
-// console.log(model_v0.length());
+console.log(transformedV0.toString());

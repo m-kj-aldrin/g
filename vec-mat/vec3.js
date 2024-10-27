@@ -408,7 +408,7 @@ class Vec3 {
    * @throws {Error} If attempting to normalize a zero-length vector.
    */
   normalize() {
-    const len = this.length();
+    const len = this.length;
     validateNonZero(len, "Cannot normalize a zero length vector");
 
     this.x /= len;
