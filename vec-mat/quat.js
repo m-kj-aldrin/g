@@ -371,7 +371,6 @@ class Quat {
       throw new Error("At least two quaternions must be provided for the multiplication");
     }
     return quats.reduce((result, q) => {
-      validateQuat(q);
       return q.multiply(result);
     }, new Quat());
   }

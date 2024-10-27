@@ -102,12 +102,13 @@ class Mat3 {
    * @returns {Mat3} The resulting matrix.
    */
   static multiply(...matrices) {
-    if (matrices.length === 0) {
-      throw new Error("At least one matrix must be provided for multiplication.");
+    if (matrices.length < 2) {
+      throw new Error("At least two matrices must be provided for multiplication.");
     }
 
-    const result = matrices.reduce((r, m) => r.multiply(m), new Mat3());
-    return result;
+    return matrices.reduce((r, m) => {
+      return r.multiply(m);
+    }, new Mat3());
   }
 
   /**
@@ -163,8 +164,8 @@ class Mat3 {
   }
 
   /**
-   * Returns a translation matrix based on a 3D vector
-   * @param {Vec2} vector - 3D vector representing the translation
+   * Returns a translation matrix based on a 2D vector
+   * @param {Vec2} vector - 2D vector representing the translation
    * @returns {Mat3} A new translation matrix
    */
   static fromTranslation(vector) {
