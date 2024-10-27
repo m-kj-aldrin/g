@@ -1,4 +1,11 @@
-import { validateNumber, validateVector3, validateMat4, validateArray } from "./validation.js";
+import Mat3 from "./mat3.js";
+import {
+  validateNumber,
+  validateVector3,
+  validateMat4,
+  validateArray,
+  validateMat4OrMat3,
+} from "./validation.js";
 
 import Vec3 from "./vec3.js";
 
@@ -45,14 +52,41 @@ class Mat4 {
 
   /**
    * Multiplies this matrix by another Mat4.
-   * @param {Mat4} other - The matrix to multiply with.
+   * @param {Mat4|Mat3} other - The matrix to multiply with.
    * @returns {Mat4} This instance for chaining.
    */
   multiply(other) {
-    validateMat4(other, "other matrix");
+    validateMat4OrMat3(other, "other matrix");
+
+    const otherElements = new Float32Array(16);
+    if (other instanceof Mat4) {
+      otherElements.set(other.elements);
+    } else if (other instanceof Mat3) {
+      // Embed Mat3 into Mat4 with last column (0, 0, 0, 1)
+      const mat3 = other.elements;
+      otherElements.set([
+        mat3[0],
+        mat3[1],
+        mat3[2],
+        0,
+        mat3[3],
+        mat3[4],
+        mat3[5],
+        0,
+        mat3[6],
+        mat3[7],
+        mat3[8],
+        0,
+        0,
+        0,
+        0,
+        1,
+      ]);
+    }
 
     const a = this.#elements;
-    const b = other.#elements;
+    // const b = other.#elements;
+    const b = otherElements;
     const result = new Float32Array(16);
 
     for (let row = 0; row < 4; row++) {
@@ -89,7 +123,7 @@ class Mat4 {
 
   /**
    * Multiplies matrices returning a new matrix
-   * @param  {...Mat4} matrices
+   * @param  {...(Mat4|Mat3)} matrices
    * @returns {Mat4} Matrix result
    */
   static multiply(...matrices) {
@@ -97,9 +131,18 @@ class Mat4 {
       throw new Error("At least two matrices must be provided for multiplication.");
     }
 
-    return matrices.reduce((r, m) => {
-      return r.multiply(m);
-    }, new Mat4());
+    let result = new Mat4();
+
+    for (let i = 0; i < matrices.length; i++) {
+      const m = matrices[i];
+      result.multiply(m);
+    }
+
+    return result;
+
+    // return matrices.reduce((r, m) => {
+    //   return r.multiply(m);
+    // }, new Mat4());
   }
 
   /* - - scaling, rotation & translation matrices - - */

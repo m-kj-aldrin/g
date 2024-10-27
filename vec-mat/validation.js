@@ -62,6 +62,15 @@ export function validateMat4(mat, msg = "matrix") {
   }
 }
 /**
+ * @param {Mat4|Mat3} mat
+ * @param {string} [msg]
+ */
+export function validateMat4OrMat3(mat, msg = "matrix") {
+  if (!(mat instanceof Mat4) && !(mat instanceof Mat3)) {
+    throw new TypeError(`${msg} must be an instance of Mat4 or Mat3.`);
+  }
+}
+/**
  * @param {Mat3} mat
  * @param {string} [msg]
  */
