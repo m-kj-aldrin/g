@@ -5,6 +5,7 @@ import {
   validateNumber,
   validateRange,
   validateVector3,
+  validateMat3,
 } from "./validation.js";
 import Vec3 from "./vec3.js";
 
@@ -360,6 +361,19 @@ class Quat {
    */
   toString() {
     return `Quat(${this.#w}, ${this.#i}, ${this.#j}, ${this.#k})`;
+  }
+
+  /**
+   * @param  {...Quat} quats
+   */
+  static multiply(...quats) {
+    if (quats.length < 2) {
+      throw new Error("At least two quaternions must be provided for the multiplication");
+    }
+    return quats.reduce((result, q) => {
+      validateQuat(q);
+      return q.multiply(result);
+    }, new Quat());
   }
 
   /**
