@@ -1,3 +1,4 @@
+import { formatSmallFloats } from "../util/numbers.js";
 import Mat3 from "./mat3.js";
 import Mat4 from "./mat4.js";
 
@@ -363,7 +364,9 @@ class Vec3 {
    * @returns {string} A string in the format "Vec3(x, y, z)".
    */
   toString() {
-    return `Vec3(${this.x}, ${this.y}, ${this.z})`;
+    return `Vec3(${formatSmallFloats(this.x)}, ${formatSmallFloats(this.y)}, ${formatSmallFloats(
+      this.z
+    )})`;
   }
 
   /**
