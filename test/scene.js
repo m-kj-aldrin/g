@@ -1,6 +1,7 @@
 import ArcBallCamera from "../camera/arcball-camera.js";
 import Camera from "../camera/index.js";
-import { Vec2, Vec3, Vec4, Mat2, Mat3, Mat4, Quat } from "../main.js";
+import Box from "../canvas/geo/Box.js";
+import { Vec2, Vec3, Vec4, Mat2, Mat3, Mat4, Quat, Canvas } from "../main.js";
 
 let angle = Math.PI / 2;
 
@@ -41,9 +42,27 @@ let transformedV4_0 = Vec4.fromTransform(v4_0, transformMatrix_2);
 
 console.log(transformedV4_0.toString());
 
-// let camera = new Camera()
-let arcBallCamera = new ArcBallCamera(new Vec3(0, 0, 0), 5);
-arcBallCamera.rotate(Math.PI / 2, 0);
-let viewMatrix = arcBallCamera.getViewMatrix();
+// console.log(camera_viewMatrix.toString());
 
-console.log(viewMatrix.toString());
+// let arcBallCamera = new ArcBallCamera(new Vec3(0, 0, 0), 5);
+// arcBallCamera.rotate(Math.PI / 2, 0);
+// let arcBall_viewMatrix = arcBallCamera.getViewMatrix();
+
+// console.log(arcBall_viewMatrix.toString());
+
+// let test_matrix = Mat4.fromAxisAngle(new Vec3(0, 0, 1), Math.PI / 2);
+
+// let test_v = Vec3.fromTransform(new Vec3(1, 0, 0), test_matrix);
+
+// console.log(test_matrix.toString());
+// console.log(test_v.toString());
+
+let camera = new Camera(new Vec3(0, 0, 5), new Vec3(0, 0, 0));
+camera.rotate(new Vec3(1, 0, 0), Math.PI / 4);
+
+let canvas = new Canvas();
+canvas.attach(document.body);
+
+let box0 = new Box(new Vec3(128, 128, 128), new Vec3(0, 0, 0));
+
+box0.render(canvas.context, camera);

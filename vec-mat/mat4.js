@@ -241,6 +241,86 @@ class Mat4 {
 
         return new Mat4(...elements);
     }
+
+    /**
+     * Creates a perspective projection matrix.
+     *
+     * @param {number} fov - The field of view in radians.
+     * @param {number} aspectRatio - The aspect ratio of the viewport (width / height).
+     * @param {number} near - The near clipping plane.
+     * @param {number} far - The far clipping plane.
+     * @returns {Mat4} A new Mat4 instance representing the perspective projection matrix.
+     */
+    static perspective(fov, aspectRatio, near, far) {
+        const f = 1.0 / Math.tan(fov / 2);
+        const nf = 1 / (near - far);
+
+        return new Mat4(
+            f / aspectRatio,
+            0,
+            0,
+            0,
+            0,
+            f,
+            0,
+            0,
+            0,
+            0,
+            (far + near) * nf,
+            2 * far * near * nf,
+            0,
+            0,
+            -1,
+            0
+        );
+    }
+    /**
+     * Creates an orthographic projection matrix.
+     *
+     * @param {number} left - The left vertical clipping plane.
+     * @param {number} right - The right vertical clipping plane.
+     * @param {number} bottom - The bottom horizontal clipping plane.
+     * @param {number} top - The top horizontal clipping plane.
+     * @param {number} near - The near depth clipping plane.
+     * @param {number} far - The far depth clipping plane.
+     * @returns {Mat4} A new Mat4 instance representing the orthographic projection matrix.
+     */
+    static orthographic(left, right, bottom, top, near, far) {
+        // Validate all input parameters
+        validateNumber(left, "left");
+        validateNumber(right, "right");
+        validateNumber(bottom, "bottom");
+        validateNumber(top, "top");
+        validateNumber(near, "near");
+        validateNumber(far, "far");
+
+        const rl = right - left;
+        const tb = top - bottom;
+        const fn = far - near;
+
+        if (rl === 0 || tb === 0 || fn === 0) {
+            throw new Error("Invalid orthographic projection parameters.");
+        }
+
+        return new Mat4(
+            2 / rl,
+            0,
+            0,
+            -(right + left) / rl,
+            0,
+            2 / tb,
+            0,
+            -(top + bottom) / tb,
+            0,
+            0,
+            -2 / fn,
+            -(far + near) / fn,
+            0,
+            0,
+            0,
+            1
+        );
+    }
 }
 
 export default Mat4;
