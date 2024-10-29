@@ -247,63 +247,6 @@ class Vec3 {
     return this.x === vector.x && this.y === vector.y && this.z === vector.z;
   }
 
-  // /**
-  //  * Multiplies this vector by a 3x3 matrix.
-  //  *
-  //  * This operation transforms the vector by the given matrix.
-  //  *
-  //  * @param {Mat3} matrix - The 3x3 matrix to transform the vector with.
-  //  * @returns {Vec3} The transformed vector (this instance).
-  //  * @throws {TypeError} If the provided matrix is not a Mat3 instance.
-  //  */
-  // transform(matrix) {
-  //     validateMat3(matrix);
-
-  //     const x = this.x;
-  //     const y = this.y;
-  //     const z = this.z;
-
-  //     const e = matrix.elements;
-
-  //     this.x = e[0] * x + e[3] * y + e[6] * z;
-  //     this.y = e[1] * x + e[4] * y + e[7] * z;
-  //     this.z = e[2] * x + e[5] * y + e[8] * z;
-
-  //     return this;
-  // }
-  // /**
-  //  * Multiplies this vector by a 4x4 matrix.
-  //  *
-  //  * This operation transforms the vector by the given matrix.
-  //  *
-  //  * @param {Mat4} matrix - The 4x4 matrix to transform the vector with.
-  //  * @returns {Vec3} The transformed vector (this instance).
-  //  * @throws {TypeError} If the provided matrix is not a Mat4 instance.
-  //  */
-  // transform(matrix) {
-  //     validateMat4(matrix);
-
-  //     const x = this.x;
-  //     const y = this.y;
-  //     const z = this.z;
-  //     const w = this.w;
-
-  //     const e = matrix.elements;
-
-  //     this.x = e[0] * x + e[4] * y + e[8] * z + e[12] * w;
-  //     this.y = e[1] * x + e[5] * y + e[9] * z + e[13] * w;
-  //     this.z = e[2] * x + e[6] * y + e[10] * z + e[14] * w;
-  //     this.w = e[3] * x + e[7] * y + e[11] * z + e[15] * w;
-
-  //     if (w !== 0 && w !== 1) {
-  //         this.x / w;
-  //         this.y / w;
-  //         this.z / w;
-  //     }
-
-  //     return this;
-  // }
-
   /**
    * Multiplies this vector by a 3x3 or 4x4 matrix.
    *

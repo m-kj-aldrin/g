@@ -1,4 +1,3 @@
-// Import necessary validation functions and Vec2 class
 import { validateNumber, validateVector2, validateMat2, validateArray } from "./validation.js";
 
 import Vec2 from "./vec2.js";

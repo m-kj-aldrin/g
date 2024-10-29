@@ -12,9 +12,6 @@ import Vec3 from "./vec3.js";
 /**
  * Represents a quaternion for handling rotations in a right-handed coordinate system.
  *
- * Quaternions are used to represent rotations without suffering from gimbal lock
- * and provide smooth interpolation between rotations.
- *
  * @class
  */
 class Quat {
