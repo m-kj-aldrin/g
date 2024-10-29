@@ -29,11 +29,13 @@ class Vec3 {
   #z = 0;
 
   /**
-   * Constructs a new Vec3 instance.
+   * Creates a new Vec3 instance.
    *
+   * @constructor
    * @param {number} [x=0] - The x-component of the vector.
    * @param {number} [y=0] - The y-component of the vector.
    * @param {number} [z=0] - The z-component of the vector.
+   * @throws {TypeError} If any of the provided components are not numbers.
    */
   constructor(x = 0, y = 0, z = 0) {
     if (x !== undefined) this.x = x;
@@ -108,7 +110,7 @@ class Vec3 {
    * Adds another vector to this vector.
    *
    * @param {Vec3} vector - The vector to add.
-   * @returns {Vec3} The updated vector (this instance).
+   * @returns {Vec3} The updated vector instance.
    * @throws {TypeError} If the provided vector is not an instance of Vec3.
    */
   add(vector) {
@@ -123,7 +125,7 @@ class Vec3 {
    * Subtracts another vector from this vector.
    *
    * @param {Vec3} vector - The vector to subtract.
-   * @returns {Vec3} The updated vector (this instance).
+   * @returns {Vec3} The updated vector instance.
    * @throws {TypeError} If the provided vector is not an instance of Vec3.
    */
   subtract(vector) {
@@ -138,7 +140,7 @@ class Vec3 {
    * Multiplies this vector by a scalar.
    *
    * @param {number} scalar - The scalar to multiply by.
-   * @returns {Vec3} The updated vector (this instance).
+   * @returns {Vec3} The updated vector instance.
    * @throws {TypeError} If the provided scalar is not a number.
    */
   multiplyScalar(scalar) {
@@ -153,7 +155,7 @@ class Vec3 {
    * Divides this vector by a scalar.
    *
    * @param {number} scalar - The scalar to divide by.
-   * @returns {Vec3} The updated vector (this instance).
+   * @returns {Vec3} The updated vector instance.
    * @throws {TypeError} If the provided scalar is not a number.
    * @throws {Error} If attempting to divide by zero.
    */
@@ -173,8 +175,8 @@ class Vec3 {
    *
    * @param {Vec3} min - The minimum bounds for each component.
    * @param {Vec3} max - The maximum bounds for each component.
-   * @returns {Vec3} The clamped vector (this instance).
-   * @throws {TypeError} If either min or max is not an instance of Vec3.
+   * @returns {Vec3} The clamped vector instance.
+   * @throws {TypeError} If either `min` or `max` is not an instance of `Vec3`.
    */
   clamp(min, max) {
     validateVector3(min);
@@ -186,10 +188,10 @@ class Vec3 {
   }
 
   /**
-   * Returns the component-wise minimum of this vector and another vector.
+   * Computes the component-wise minimum of this vector and another vector.
    *
-   * @param {Vec3} vector - The other vector to compare with.
-   * @returns {Vec3} The vector with the minimum components (this instance).
+   * @param {Vec3} vector - The vector to compare with.
+   * @returns {Vec3} The vector with the minimum components.
    * @throws {TypeError} If the provided vector is not an instance of Vec3.
    */
   min(vector) {
@@ -201,10 +203,10 @@ class Vec3 {
   }
 
   /**
-   * Returns the component-wise maximum of this vector and another vector.
+   * Computes the component-wise maximum of this vector and another vector.
    *
-   * @param {Vec3} vector - The other vector to compare with.
-   * @returns {Vec3} The vector with the maximum components (this instance).
+   * @param {Vec3} vector - The vector to compare with.
+   * @returns {Vec3} The vector with the maximum components.
    * @throws {TypeError} If the provided vector is not an instance of Vec3.
    */
   max(vector) {
@@ -219,8 +221,8 @@ class Vec3 {
    * Linearly interpolates between this vector and another vector by a factor t.
    *
    * @param {Vec3} vector - The target vector to interpolate towards.
-   * @param {number} t - The interpolation factor (0 <= t <= 1).
-   * @returns {Vec3} The interpolated vector (this instance).
+   * @param {number} t - The interpolation factor (0 ≤ t ≤ 1).
+   * @returns {Vec3} The interpolated vector instance.
    * @throws {TypeError} If the provided vector is not an instance of Vec3 or if t is not a number.
    * @throws {RangeError} If t is not between 0 and 1.
    */
@@ -236,10 +238,10 @@ class Vec3 {
   }
 
   /**
-   * Checks if this vector is equal to another vector.
+   * Determines whether this vector is equal to another vector.
    *
-   * @param {Vec3} vector - The other vector to compare with.
-   * @returns {boolean} True if all components are equal, otherwise false.
+   * @param {Vec3} vector - The vector to compare with.
+   * @returns {boolean} True if all components are equal; otherwise, false.
    * @throws {TypeError} If the provided vector is not an instance of Vec3.
    */
   equals(vector) {
@@ -248,14 +250,14 @@ class Vec3 {
   }
 
   /**
-   * Multiplies this vector by a 3x3 or 4x4 matrix.
+   * Transforms this vector using a 3x3 or 4x4 matrix.
    *
-   * - If a Mat3 is provided, the vector is treated as a direction vector (w=0).
-   * - If a Mat4 is provided, the vector is treated as a point vector (w=1).
+   * - If a `Mat3` is provided, the vector is treated as a direction vector (w=0).
+   * - If a `Mat4` is provided, the vector is treated as a point vector (w=1).
    *
-   * @param {Mat3|Mat4} matrix - The matrix to transform the vector with.
-   * @returns {Vec3} The transformed vector (this instance).
-   * @throws {TypeError} If the provided matrix is not a Mat3 or Mat4 instance.
+   * @param {Mat3|Mat4} matrix - The matrix to apply the transformation.
+   * @returns {Vec3} The transformed vector instance.
+   * @throws {TypeError} If the provided matrix is not an instance of `Mat3` or `Mat4`.
    */
   transform(matrix) {
     if (matrix instanceof Mat3) {
@@ -293,9 +295,9 @@ class Vec3 {
   }
 
   /**
-   * Creates a clone of this vector.
+   * Creates a duplicate of this vector.
    *
-   * @returns {Vec3} A new Vec3 instance with the same components as this vector.
+   * @returns {Vec3} A new `Vec3` instance with identical components.
    */
   clone() {
     return new Vec3(this.x, this.y, this.z);
@@ -304,7 +306,7 @@ class Vec3 {
   /**
    * Returns a string representation of the vector.
    *
-   * @returns {string} A string in the format "Vec3(x, y, z)".
+   * @returns {string} A string formatted as "Vec3(x, y, z)".
    */
   toString() {
     return `Vec3(${formatSmallFloats(this.x)}, ${formatSmallFloats(this.y)}, ${formatSmallFloats(
@@ -313,12 +315,12 @@ class Vec3 {
   }
 
   /**
-   * Calculates the dot product of this vector with another vector.
+   * Computes the dot product of this vector with another vector.
    *
-   * The dot product is a scalar value that is a measure of the vectors'
-   * magnitude and the cosine of the angle between them.
+   * The dot product is a scalar representing the product of the vectors' magnitudes
+   * and the cosine of the angle between them.
    *
-   * @param {Vec3} vector - The other vector to compute the dot product with.
+   * @param {Vec3} vector - The vector to compute the dot product with.
    * @returns {number} The dot product of the two vectors.
    * @throws {TypeError} If the provided vector is not an instance of Vec3.
    */
@@ -328,10 +330,13 @@ class Vec3 {
   }
 
   /**
-   * Calculates the cross product of this vector with another vector.
+   * Computes the cross product of this vector with another vector.
    *
-   * @param {Vec3} vector - The other vector to compute the cross product with.
-   * @returns {Vec3} The updated vector (this instance) after cross product.
+   * The cross product results in a vector that is perpendicular to both original vectors,
+   * following the right-hand rule.
+   *
+   * @param {Vec3} vector - The vector to compute the cross product with.
+   * @returns {Vec3} The updated vector instance after the cross product.
    * @throws {TypeError} If the provided vector is not an instance of Vec3.
    */
   cross(vector) {
@@ -348,10 +353,8 @@ class Vec3 {
   /**
    * Normalizes the vector to have a length of 1.
    *
-   * If the vector is a zero vector (length of 0), an error is thrown.
-   *
-   * @returns {Vec3} The normalized vector (this instance).
-   * @throws {Error} If attempting to normalize a zero-length vector.
+   * @returns {Vec3} The normalized vector instance.
+   * @throws {Error} If attempting to normalize a vector with zero length.
    */
   normalize() {
     const len = this.length;
@@ -366,7 +369,7 @@ class Vec3 {
   /**
    * Calculates the Euclidean distance between this vector and another vector.
    *
-   * @param {Vec3} vector - The other vector to calculate the distance to.
+   * @param {Vec3} vector - The vector to calculate the distance to.
    * @returns {number} The Euclidean distance between the two vectors.
    * @throws {TypeError} If the provided vector is not an instance of Vec3.
    */
@@ -379,9 +382,9 @@ class Vec3 {
   }
 
   /**
-   * Calculates the length (magnitude) of the vector.
+   * Gets the length (magnitude) of the vector.
    *
-   * @returns {number} The length of the vector.
+   * @type {number}
    * @readonly
    */
   get length() {
@@ -392,7 +395,7 @@ class Vec3 {
    * Sets the length (magnitude) of the vector.
    *
    * @param {number} newLength - The desired length of the vector.
-   * @throws {Error} If attempting to set length on a zero vector.
+   * @throws {Error} If attempting to set the length of a vector with zero length.
    */
   set length(newLength) {
     const currentLength = this.length;
@@ -413,8 +416,8 @@ class Vec3 {
    *
    * @param {Vec3} a - The first vector.
    * @param {Vec3} b - The second vector.
-   * @returns {Vec3} A new Vec3 instance representing the sum.
-   * @throws {TypeError} If either a or b is not an instance of Vec3.
+   * @returns {Vec3} A new `Vec3` instance representing the sum.
+   * @throws {TypeError} If either `a` or `b` is not an instance of `Vec3`.
    */
   static add(a, b) {
     validateVector3(a);
@@ -427,8 +430,8 @@ class Vec3 {
    *
    * @param {Vec3} a - The vector to subtract from.
    * @param {Vec3} b - The vector to subtract.
-   * @returns {Vec3} A new Vec3 instance representing the difference.
-   * @throws {TypeError} If either a or b is not an instance of Vec3.
+   * @returns {Vec3} A new `Vec3` instance representing the difference.
+   * @throws {TypeError} If either `a` or `b` is not an instance of `Vec3`.
    */
   static subtract(a, b) {
     validateVector3(a);
@@ -437,12 +440,12 @@ class Vec3 {
   }
 
   /**
-   * Multiplies the provided vector by a scalar.
+   * Multiplies a vector by a scalar and returns a new vector without modifying the original.
    *
    * @param {Vec3} vector - The vector to multiply.
    * @param {number} scalar - The scalar to multiply by.
-   * @returns {Vec3} The new vector.
-   * @throws {TypeError} If the provided vector is not an instance of Vec3 or scalar is not a number.
+   * @returns {Vec3} A new `Vec3` instance representing the scaled vector.
+   * @throws {TypeError} If the provided vector is not an instance of `Vec3` or if the scalar is not a number.
    */
   static multiplyScalar(vector, scalar) {
     validateVector3(vector);
@@ -452,12 +455,12 @@ class Vec3 {
   }
 
   /**
-   * Calculates the dot product of two vectors.
+   * Computes the dot product of two vectors.
    *
    * @param {Vec3} a - The first vector.
    * @param {Vec3} b - The second vector.
-   * @returns {number} The dot product of vectors a and b.
-   * @throws {TypeError} If either a or b is not an instance of Vec3.
+   * @returns {number} The dot product of vectors `a` and `b`.
+   * @throws {TypeError} If either `a` or `b` is not an instance of `Vec3`.
    */
   static dot(a, b) {
     validateVector3(a);
@@ -466,12 +469,15 @@ class Vec3 {
   }
 
   /**
-   * Calculates the cross product of two vectors.
+   * Computes the cross product of two vectors and returns a new vector.
+   *
+   * The cross product results in a vector that is perpendicular to both original vectors,
+   * following the right-hand rule.
    *
    * @param {Vec3} a - The first vector.
    * @param {Vec3} b - The second vector.
-   * @returns {Vec3} A new Vec3 instance representing the cross product.
-   * @throws {TypeError} If either a or b is not an instance of Vec3.
+   * @returns {Vec3} A new `Vec3` instance representing the cross product.
+   * @throws {TypeError} If either `a` or `b` is not an instance of `Vec3`.
    */
   static cross(a, b) {
     validateVector3(a);
@@ -487,10 +493,10 @@ class Vec3 {
    *
    * @param {Vec3} a - The starting vector.
    * @param {Vec3} b - The ending vector.
-   * @param {number} t - The interpolation factor (0 <= t <= 1).
-   * @returns {Vec3} A new Vec3 instance representing the interpolated vector.
-   * @throws {TypeError} If a or b is not an instance of Vec3 or if t is not a number.
-   * @throws {RangeError} If t is not between 0 and 1.
+   * @param {number} t - The interpolation factor (0 ≤ t ≤ 1).
+   * @returns {Vec3} A new `Vec3` instance representing the interpolated vector.
+   * @throws {TypeError} If either `a` or `b` is not an instance of `Vec3` or if `t` is not a number.
+   * @throws {RangeError} If `t` is not between 0 and 1.
    */
   static lerp(a, b, t) {
     validateVector3(a);
@@ -504,17 +510,16 @@ class Vec3 {
   /**
    * Creates a new vector by applying a transformation matrix to an existing vector.
    *
-   * - If a Mat3 is provided, the vector is treated as a direction vector (w=0).
-   * - If a Mat4 is provided, the vector is treated as a point vector (w=1).
+   * - If a `Mat3` is provided, the vector is treated as a direction vector (w=0).
+   * - If a `Mat4` is provided, the vector is treated as a point vector (w=1).
    *
-   * @param {Vec3} vector - The vector to transform. Must be a Vec3 instance.
-   * @param {Mat3|Mat4} matrix - The matrix to transform the vector with.
-   * @returns {Vec3} A new Vec3 instance representing the transformed vector.
-   * @throws {TypeError} If the provided vector is not a Vec3 instance or if the matrix is not a Mat3 instance.
+   * @param {Vec3} vector - The vector to transform. Must be an instance of `Vec3`.
+   * @param {Mat3|Mat4} matrix - The matrix to apply the transformation.
+   * @returns {Vec3} A new `Vec3` instance representing the transformed vector.
+   * @throws {TypeError} If the provided vector is not an instance of `Vec3` or if the matrix is not an instance of `Mat3` or `Mat4`.
    */
   static fromTransform(vector, matrix) {
     validateVector3(vector);
-
     return vector.clone().transform(matrix);
   }
 }
