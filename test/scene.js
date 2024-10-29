@@ -1,3 +1,5 @@
+import ArcBallCamera from "../camera/arcball-camera.js";
+import Camera from "../camera/index.js";
 import { Vec2, Vec3, Vec4, Mat2, Mat3, Mat4, Quat } from "../main.js";
 
 let angle = Math.PI / 2;
@@ -38,3 +40,10 @@ let transformMatrix_2 = Mat4.multiply(sM_2, rM_2, tM_2);
 let transformedV4_0 = Vec4.fromTransform(v4_0, transformMatrix_2);
 
 console.log(transformedV4_0.toString());
+
+// let camera = new Camera()
+let arcBallCamera = new ArcBallCamera(new Vec3(0, 0, 0), 5);
+arcBallCamera.rotate(Math.PI / 2, 0);
+let viewMatrix = arcBallCamera.getViewMatrix();
+
+console.log(viewMatrix.toString());
