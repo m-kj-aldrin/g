@@ -168,19 +168,45 @@ class Mat2 {
      */
     multiply(matrix) {
         let a = this.#elements;
-        let b = matrix.elements;
-        let b_size = matrix instanceof Mat2 ? 2 : 3;
+        let b = new Float32Array(4);
+
+        let other = matrix.elements;
+
+        if (matrix instanceof Mat2) {
+            b.set(other);
+        } else if (matrix instanceof Mat3) {
+            b.set([...other.slice(0, 2), ...other.slice(3, 5)]);
+        }
 
         let result = new Float32Array({ length: 4 });
 
         for (let col = 0; col < 2; col++) {
             for (let row = 0; row < 2; row++) {
-                result[col * 2 + row] = a[0 * 2 + row];
-                a[1 * 2 + row];
+                result[col * 2 + row] =
+                    a[0 * 2 + row] * b[col * 2 + 0] +
+                    a[1 * 2 + row] * b[col * 2 + 1];
             }
         }
 
         this.#elements.set(result);
+
+        return this;
+    }
+
+    clone() {
+        return new Mat2(this.#elements);
+    }
+
+    /**
+     * @param {...(Mat2|Mat3)} matrix
+     */
+    static multiply(...matrix) {
+        return /**@type {Mat2} */ (
+            matrix.reduce(
+                /**@param {Mat2} r */ (r, m) => r.multiply(m),
+                new Mat2()
+            )
+        );
     }
 
     /**
@@ -220,21 +246,34 @@ class Mat3 {
 
     /**
      *
-     * @param {Mat3 | Mat4} matrix
+     * @param {Mat2 | Mat3 | Mat4} matrix
      */
     multiply(matrix) {
         let a = this.#elements;
-        let b = matrix.elements;
-        let b_size = matrix instanceof Mat3 ? 3 : 4;
+        let b = new Float32Array(9);
+
+        let other = matrix.elements;
+
+        if (matrix instanceof Mat2) {
+            b.set([...other.slice(0, 2), 0, ...other.slice(2, 4), 0, 0, 0, 1]);
+        } else if (matrix instanceof Mat3) {
+            b.set(matrix.elements);
+        } else if (matrix instanceof Mat4) {
+            b.set([
+                ...other.slice(0, 3),
+                ...other.slice(4, 7),
+                ...other.slice(8, 11),
+            ]);
+        }
 
         let result = new Float32Array({ length: 9 });
 
         for (let col = 0; col < 3; col++) {
             for (let row = 0; row < 3; row++) {
                 result[col * 3 + row] =
-                    a[0 * 3 + row] * b[col * b_size + 0] +
-                    a[1 * 3 + row] * b[col * b_size + 1] +
-                    a[2 * 3 + row] * b[col * b_size + 2];
+                    a[0 * 3 + row] * b[col * 3 + 0] +
+                    a[1 * 3 + row] * b[col * 3 + 1] +
+                    a[2 * 3 + row] * b[col * 3 + 2];
             }
         }
 
@@ -245,6 +284,19 @@ class Mat3 {
 
     clone() {
         return new Mat3(this.#elements);
+    }
+
+    /**
+     *
+     * @param  {...(Mat2|Mat3|Mat4)} matrix
+     */
+    static multiply(...matrix) {
+        return /**@type {Mat3}*/ (
+            matrix.reduce(
+                /**@param {Mat3} r*/ (r, m) => r.multiply(m),
+                new Mat3()
+            )
+        );
     }
 
     /**
@@ -283,6 +335,14 @@ class Mat3 {
         let R33 = t * z * z + c;
 
         return new Mat3(R11, R21, R31, R12, R22, R32, R13, R23, R33);
+    }
+
+    /**
+     * @param {Vec2} vector
+     */
+    static fromTranslate(vector) {
+        let { x, y } = vector;
+        return new Mat3(1, 0, 0, 0, 1, 0, x, y, 1);
     }
 }
 
