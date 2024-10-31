@@ -270,7 +270,7 @@ class Mat3 {
 
     /**
      *
-     * @param {Mat2 | Mat3 | Mat4} matrix
+     * @param {Mat2 | Mat3 } matrix
      */
     multiply(matrix) {
         let a = this.#elements;
@@ -282,12 +282,6 @@ class Mat3 {
             b.set([...other.slice(0, 2), 0, ...other.slice(2, 4), 0, 0, 0, 1]);
         } else if (matrix instanceof Mat3) {
             b.set(matrix.elements);
-        } else if (matrix instanceof Mat4) {
-            b.set([
-                ...other.slice(0, 3),
-                ...other.slice(4, 7),
-                ...other.slice(8, 11),
-            ]);
         }
 
         let result = new Float32Array({ length: 9 });
@@ -388,6 +382,128 @@ class Mat4 {
 
     get elements() {
         return this.#elements;
+    }
+
+    /**
+     *
+     * @param {Mat3 | Mat4} matrix
+     */
+    multiply(matrix) {
+        let a = this.#elements;
+        let b = new Float32Array(16);
+
+        let other = matrix.elements;
+
+        if (matrix instanceof Mat3) {
+            b.set([
+                ...other.slice(0, 3),
+                0,
+                ...other.slice(3, 6),
+                0,
+                ...other.slice(6, 9),
+                0,
+                0,
+                0,
+                0,
+                1,
+            ]);
+        } else if (matrix instanceof Mat4) {
+            b.set(matrix.elements);
+        }
+
+        let result = new Float32Array({ length: 16 });
+
+        for (let col = 0; col < 4; col++) {
+            for (let row = 0; row < 4; row++) {
+                result[col * 4 + row] =
+                    a[0 * 4 + row] * b[col * 4 + 0] +
+                    a[1 * 4 + row] * b[col * 4 + 1] +
+                    a[2 * 4 + row] * b[col * 4 + 2] +
+                    a[3 * 4 + row] * b[col * 4 + 3];
+            }
+        }
+
+        this.#elements.set(result);
+
+        return this;
+    }
+
+    clone() {
+        return new Mat4(this.#elements);
+    }
+
+    toString() {
+        return matrixToString(this.#elements, 4, 4, 2, "Mat4");
+    }
+
+    /**
+     *
+     * @param {...(Mat3|Mat4)} matrix
+     */
+    static multiply(...matrix) {
+        return matrix.reduce((r, m) => r.multiply(m), new Mat4());
+    }
+
+    /**
+     * @param {Vec3} vector
+     */
+    static fromScaling(vector) {
+        let { x, y, z } = vector;
+        return new Mat4(x, 0, 0, 0, 0, y, 0, 0, 0, 0, z, 0, 0, 0, 0, 1);
+    }
+
+    /**
+     * @param {Vec3} axis
+     * @param {number} angle
+     */
+    static fromAxisRotation(axis, angle) {
+        let v = axis.clone().normalize();
+
+        let { x, y, z } = v;
+
+        let c = Math.cos(angle);
+        let s = Math.sin(angle);
+        let t = 1 - c;
+
+        let R11 = t * x * x + c;
+        let R12 = t * x * y - s * z;
+        let R13 = t * x * z + s * y;
+
+        let R21 = t * x * y + s * z;
+        let R22 = t * y * y + c;
+        let R23 = t * y * z - s * x;
+
+        let R31 = t * x * z - s * y;
+        let R32 = t * y * z + s * x;
+        let R33 = t * z * z + c;
+
+        return new Mat4(
+            R11,
+            R21,
+            R31,
+            0,
+            R12,
+            R22,
+            R32,
+            0,
+            R13,
+            R23,
+            R33,
+            0,
+            0,
+            0,
+            0,
+            1
+        );
+    }
+
+    /**
+     *
+     * @param {Vec3} vector
+     */
+    static fromTranslation(vector) {
+        let { x, y, z } = vector;
+        return new Mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y, z, 1);
     }
 }
 
