@@ -113,6 +113,7 @@ class Vec3 {
         if (vectorOrMatrix instanceof Vec3) {
             this.#x *= vectorOrMatrix.#x;
             this.#y *= vectorOrMatrix.#y;
+            this.#z *= vectorOrMatrix.#z;
 
             return this;
         }
@@ -187,7 +188,9 @@ class Mat2 {
     #elements = new Float32Array([1, 0, 0, 1]);
 
     constructor(...elements) {
-        this.#elements.set(elements);
+        if (elements.length === 4) {
+            this.#elements.set(elements);
+        }
     }
 
     get elements() {
@@ -201,9 +204,7 @@ class Mat2 {
         let a = this.#elements;
         let b = matrix.#elements;
 
-        let other = matrix.elements;
-
-        let result = new Float32Array({ length: 4 });
+        let result = new Float32Array(4);
 
         for (let col = 0; col < 2; col++) {
             for (let row = 0; row < 2; row++) {
@@ -254,7 +255,7 @@ class Mat2 {
 
 class Mat3 {
     /**
-     * Matrix elements in column-majo
+     * Matrix elements in column-major
      */
     #elements = new Float32Array([1, 0, 0, 0, 1, 0, 0, 0, 1]);
 
@@ -377,7 +378,9 @@ class Mat4 {
     ]);
 
     constructor(...elements) {
-        this.#elements.set(elements);
+        if (elements.length === 16) {
+            this.#elements.set(elements);
+        }
     }
 
     get elements() {
@@ -411,7 +414,7 @@ class Mat4 {
             b.set(matrix.elements);
         }
 
-        let result = new Float32Array({ length: 16 });
+        let result = new Float32Array(16);
 
         for (let col = 0; col < 4; col++) {
             for (let row = 0; row < 4; row++) {
