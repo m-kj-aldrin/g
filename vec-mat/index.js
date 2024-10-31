@@ -1,3 +1,6 @@
+import { formatSmallFloats } from "../util/numbers.js";
+import { matrixToString } from "../util/string.js";
+
 class Vec2 {
     #x = 0;
     #y = 0;
@@ -54,6 +57,28 @@ class Vec2 {
         throw new TypeError(
             "vectorOrMatrix needs to be of type Vec2 | Mat2 | Mat3"
         );
+    }
+
+    get length() {
+        return Math.sqrt(this.#x ** 2 + this.#y ** 2);
+    }
+
+    normalize() {
+        let length = this.length;
+        this.#x /= length;
+        this.#y /= length;
+
+        return this;
+    }
+
+    clone() {
+        return new Vec2(this.#x, this.#y);
+    }
+
+    toString() {
+        return `Vec2( ${formatSmallFloats(this.#x)} , ${formatSmallFloats(
+            this.#y
+        )} )`;
     }
 }
 
@@ -147,6 +172,12 @@ class Vec3 {
     clone() {
         return new Vec3(this.#x, this.#y, this.#z);
     }
+
+    toString() {
+        return `Vec3( ${formatSmallFloats(this.#x)} , ${formatSmallFloats(
+            this.#y
+        )} , ${formatSmallFloats(this.#z)} )`;
+    }
 }
 
 class Mat2 {
@@ -164,19 +195,13 @@ class Mat2 {
     }
 
     /**
-     * @param {Mat2 | Mat3} matrix
+     * @param {Mat2} matrix
      */
     multiply(matrix) {
         let a = this.#elements;
-        let b = new Float32Array(4);
+        let b = matrix.#elements;
 
         let other = matrix.elements;
-
-        if (matrix instanceof Mat2) {
-            b.set(other);
-        } else if (matrix instanceof Mat3) {
-            b.set([...other.slice(0, 2), ...other.slice(3, 5)]);
-        }
 
         let result = new Float32Array({ length: 4 });
 
@@ -197,22 +222,21 @@ class Mat2 {
         return new Mat2(this.#elements);
     }
 
+    toString() {
+        return matrixToString(this.#elements, 2, 2, 2, "Mat2");
+    }
+
     /**
-     * @param {...(Mat2|Mat3)} matrix
+     * @param {...(Mat2)} matrix
      */
     static multiply(...matrix) {
-        return /**@type {Mat2} */ (
-            matrix.reduce(
-                /**@param {Mat2} r */ (r, m) => r.multiply(m),
-                new Mat2()
-            )
-        );
+        return matrix.reduce((r, m) => r.multiply(m), new Mat2());
     }
 
     /**
      * @param {Vec2} vector
      */
-    static fromScale(vector) {
+    static fromScaling(vector) {
         let { x, y } = vector;
         return new Mat2(x, 0, 0, y);
     }
@@ -286,6 +310,10 @@ class Mat3 {
         return new Mat3(this.#elements);
     }
 
+    toString() {
+        return matrixToString(this.#elements, 3, 3, 2, "Mat3");
+    }
+
     /**
      *
      * @param  {...(Mat2|Mat3|Mat4)} matrix
@@ -303,7 +331,7 @@ class Mat3 {
      *
      * @param {Vec3} vector
      */
-    static fromScale(vector) {
+    static fromScaling(vector) {
         let { x, y, z } = vector;
         return new Mat3(x, 0, 0, 0, y, 0, 0, 0, z);
     }
@@ -340,7 +368,7 @@ class Mat3 {
     /**
      * @param {Vec2} vector
      */
-    static fromTranslate(vector) {
+    static fromTranslation(vector) {
         let { x, y } = vector;
         return new Mat3(1, 0, 0, 0, 1, 0, x, y, 1);
     }

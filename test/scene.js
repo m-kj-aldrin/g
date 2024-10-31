@@ -45,3 +45,22 @@ import { Mat2, Mat3, Mat4, Vec2, Vec3 } from "../main.js";
 
 // // console.log(m3_modelMatrix_1.elements);
 
+let m2_00 = Mat2.fromScaling(new Vec2(50, 1));
+let m2_01 = Mat2.fromRotation(Math.PI / 4);
+let m3_00 = Mat3.fromTranslation(new Vec2(300, -50));
+
+let m2_model_matrix = Mat3.multiply(m3_00, m2_01, m2_00);
+
+console.log(m2_00.toString());
+
+console.log(m2_model_matrix.toString());
+
+let v2_00 = new Vec2(1, 0);
+let v2_00_transformed = v2_00.clone().multiply(m2_model_matrix);
+
+console.log(v2_00_transformed.toString());
+
+let v3_00 = new Vec3(1,2,3).multiply(m3_00)
+
+console.log(v3_00.toString());
+
