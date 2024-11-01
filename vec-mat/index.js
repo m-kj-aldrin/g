@@ -26,9 +26,9 @@ class Vec2 {
         if (!(vector instanceof Vec2)) {
             throw new TypeError("Argument must be an instance of Vec2");
         }
-        this.#x += vector.#x;
-        this.#y += vector.#y;
-        return this;
+        let x = this.#x + vector.#x;
+        let y = this.#y + vector.#y;
+        return new Vec2(x, y);
     }
 
     /**
@@ -40,9 +40,9 @@ class Vec2 {
         if (!(vector instanceof Vec2)) {
             throw new TypeError("Argument must be an instance of Vec2");
         }
-        this.#x -= vector.#x;
-        this.#y -= vector.#y;
-        return this;
+        let x = this.#x - vector.#x;
+        let y = this.#y - vector.#y;
+        return new Vec2(x, y);
     }
 
     /**
@@ -66,9 +66,9 @@ class Vec2 {
         if (typeof scalar !== "number") {
             throw new TypeError("Scalar must be a number");
         }
-        this.#x *= scalar;
-        this.#y *= scalar;
-        return this;
+        let x = this.#x * scalar;
+        let y = this.#y * scalar;
+        return new Vec2(x, y);
     }
 
     /**
@@ -83,9 +83,9 @@ class Vec2 {
         if (scalar === 0) {
             throw new Error("Division by zero");
         }
-        this.#x /= scalar;
-        this.#y /= scalar;
-        return this;
+        let x = this.#x / scalar;
+        let y = this.#y / scalar;
+        return new Vec2(x, y);
     }
 
     /**
@@ -109,9 +109,9 @@ class Vec2 {
      */
     multiply(vectorOrMatrix) {
         if (vectorOrMatrix instanceof Vec2) {
-            this.#x *= vectorOrMatrix.#x;
-            this.#y *= vectorOrMatrix.#y;
-            return this;
+            let _x = this.#x * vectorOrMatrix.#x;
+            let _y = this.#y * vectorOrMatrix.#y;
+            return new Vec2(_x, _y);
         }
 
         if (vectorOrMatrix instanceof Mat3) {
@@ -121,10 +121,7 @@ class Vec2 {
             let _y = this.#x * e[1] + this.#y * e[4] + e[7];
             // let _w = this.#x * e[2] + this.#y * e[5] + e[8];
 
-            this.#x = _x;
-            this.#y = _y;
-
-            return this;
+            return new Vec2(_x, _y);
         }
 
         throw new TypeError("vectorOrMatrix needs to be of type Vec2 | Mat3");
@@ -139,9 +136,7 @@ class Vec2 {
         if (length === 0) {
             throw new Error("Cannot normalize a zero-length vector");
         }
-        this.#x /= length;
-        this.#y /= length;
-        return this;
+        return this.scalarDivide(length);
     }
 
     clone() {
@@ -181,31 +176,33 @@ class Vec3 {
     /**
      * Adds another Vec3 to this vector component-wise.
      * @param {Vec3} vector
-     * @returns {Vec3} This vector after addition.
+     * @returns {Vec3} A new Vec3 instance after addition.
      */
     add(vector) {
         if (!(vector instanceof Vec3)) {
             throw new TypeError("Argument must be an instance of Vec3");
         }
-        this.#x += vector.#x;
-        this.#y += vector.#y;
-        this.#z += vector.#z;
-        return this;
+        return new Vec3(
+            this.#x + vector.#x,
+            this.#y + vector.#y,
+            this.#z + vector.#z
+        );
     }
 
     /**
      * Subtracts another Vec3 from this vector component-wise.
      * @param {Vec3} vector
-     * @returns {Vec3} This vector after subtraction.
+     * @returns {Vec3} A new Vec3 instance after subtraction.
      */
     subtract(vector) {
         if (!(vector instanceof Vec3)) {
             throw new TypeError("Argument must be an instance of Vec3");
         }
-        this.#x -= vector.#x;
-        this.#y -= vector.#y;
-        this.#z -= vector.#z;
-        return this;
+        return new Vec3(
+            this.#x - vector.#x,
+            this.#y - vector.#y,
+            this.#z - vector.#z
+        );
     }
 
     /**
@@ -223,22 +220,19 @@ class Vec3 {
     /**
      * Multiplies this vector by a scalar.
      * @param {number} scalar
-     * @returns {Vec3} This vector after multiplication.
+     * @returns {Vec3} A new Vec3 instance after multiplication.
      */
     scalarMultiply(scalar) {
         if (typeof scalar !== "number") {
             throw new TypeError("Scalar must be a number");
         }
-        this.#x *= scalar;
-        this.#y *= scalar;
-        this.#z *= scalar;
-        return this;
+        return new Vec3(this.#x * scalar, this.#y * scalar, this.#z * scalar);
     }
 
     /**
      * Divides this vector by a scalar.
      * @param {number} scalar
-     * @returns {Vec3} This vector after division.
+     * @returns {Vec3} A new Vec3 instance after division.
      */
     scalarDivide(scalar) {
         if (typeof scalar !== "number") {
@@ -247,16 +241,13 @@ class Vec3 {
         if (scalar === 0) {
             throw new Error("Division by zero");
         }
-        this.#x /= scalar;
-        this.#y /= scalar;
-        this.#z /= scalar;
-        return this;
+        return new Vec3(this.#x / scalar, this.#y / scalar, this.#z / scalar);
     }
 
     /**
-     * Computes the cross product with another Vec3 and updates this vector.
+     * Computes the cross product with another Vec3.
      * @param {Vec3} vector
-     * @returns {Vec3} This vector after the cross product.
+     * @returns {Vec3} A new Vec3 instance representing the cross product.
      */
     cross(vector) {
         if (!(vector instanceof Vec3)) {
@@ -266,11 +257,7 @@ class Vec3 {
         const crossY = this.#z * vector.#x - this.#x * vector.#z;
         const crossZ = this.#x * vector.#y - this.#y * vector.#x;
 
-        this.#x = crossX;
-        this.#y = crossY;
-        this.#z = crossZ;
-
-        return this;
+        return new Vec3(crossX, crossY, crossZ);
     }
 
     /**
@@ -291,18 +278,19 @@ class Vec3 {
     /**
      * Multiplies the vector either by a vector component-wise or with a matrix.
      * @param {Vec3 | Mat4} vectorOrMatrix
-     * @returns {Vec3} This vector after multiplication.
+     * @returns {Vec3} A new Vec3 instance after multiplication.
      */
     multiply(vectorOrMatrix) {
         if (vectorOrMatrix instanceof Vec3) {
-            this.#x *= vectorOrMatrix.#x;
-            this.#y *= vectorOrMatrix.#y;
-            this.#z *= vectorOrMatrix.#z;
-            return this;
+            return new Vec3(
+                this.#x * vectorOrMatrix.#x,
+                this.#y * vectorOrMatrix.#y,
+                this.#z * vectorOrMatrix.#z
+            );
         }
 
         if (vectorOrMatrix instanceof Mat4) {
-            let e = vectorOrMatrix.elements;
+            const e = vectorOrMatrix.elements;
 
             let _x = this.#x * e[0] + this.#y * e[4] + this.#z * e[8] + e[12];
             let _y = this.#x * e[1] + this.#y * e[5] + this.#z * e[9] + e[13];
@@ -315,11 +303,7 @@ class Vec3 {
                 _z /= _w;
             }
 
-            this.#x = _x;
-            this.#y = _y;
-            this.#z = _z;
-
-            return this;
+            return new Vec3(_x, _y, _z);
         }
 
         throw new TypeError("vectorOrMatrix needs to be of type Vec3 | Mat4");
@@ -329,21 +313,30 @@ class Vec3 {
         return Math.sqrt(this.#x ** 2 + this.#y ** 2 + this.#z ** 2);
     }
 
+    /**
+     * Normalizes the vector to have a length of 1.
+     * @returns {Vec3} A new Vec3 instance that is the normalized vector.
+     */
     normalize() {
-        let length = this.length;
+        const length = this.length;
         if (length === 0) {
             throw new Error("Cannot normalize a zero-length vector");
         }
-        this.#x /= length;
-        this.#y /= length;
-        this.#z /= length;
-        return this;
+        return this.scalarDivide(length);
     }
 
+    /**
+     * Creates a copy of this Vec3 instance.
+     * @returns {Vec3} A new Vec3 instance with the same components.
+     */
     clone() {
         return new Vec3(this.#x, this.#y, this.#z);
     }
 
+    /**
+     * Returns a string representation of the vector.
+     * @returns {string} The string representation.
+     */
     toString() {
         return `Vec3( ${formatSmallFloats(this.#x)} , ${formatSmallFloats(
             this.#y
@@ -362,8 +355,14 @@ class Mat3 {
      * @param  {...number} elements
      */
     constructor(...elements) {
-        if (elements.length === 9) {
-            this.#elements.set(elements);
+        if (elements.length) {
+            if (elements.length === 9) {
+                this.#elements.set(elements);
+            } else {
+                throw new Error(
+                    "Mat3 needs to be set with excatly 9 elements in column-major"
+                );
+            }
         }
     }
 
@@ -402,7 +401,7 @@ class Mat3 {
     }
 
     clone() {
-        return new Mat3(this.#elements);
+        return new Mat3(...this.#elements);
     }
 
     toString() {
@@ -433,7 +432,7 @@ class Mat3 {
     static fromRotation(angle) {
         let cos = Math.cos(angle);
         let sin = Math.sin(angle);
-        return new Mat3(cos, sin, 0 - sin, cos, 0, 0, 0, 1);
+        return new Mat3(cos, sin, 0, -sin, cos, 0, 0, 0, 1);
     }
 
     /**
@@ -453,9 +452,19 @@ class Mat4 {
         1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
     ]);
 
+    /**
+     *
+     * @param  {...number} elements
+     */
     constructor(...elements) {
-        if (elements.length === 16) {
-            this.#elements.set(elements);
+        if (elements.length) {
+            if (elements.length === 16) {
+                this.#elements.set(elements);
+            } else {
+                throw new Error(
+                    "Mat4 needs to be set with excatly 16 elements in column-major"
+                );
+            }
         }
     }
 
@@ -504,7 +513,7 @@ class Mat4 {
     }
 
     clone() {
-        return new Mat4(this.#elements);
+        return new Mat4(...this.#elements);
     }
 
     toString() {
@@ -579,6 +588,172 @@ class Mat4 {
     static fromTranslation(vector) {
         let { x, y, z } = vector;
         return new Mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y, z, 1);
+    }
+}
+
+/**
+ * Class representing a Quaternion for 3D rotations.
+ */
+class Quat {
+    #x = 0;
+    #y = 0;
+    #z = 0;
+    #w = 1;
+
+    /**
+     * Creates a new Quaternion.
+     * @param {number} x - The x component.
+     * @param {number} y - The y component.
+     * @param {number} z - The z component.
+     * @param {number} w - The w component.
+     */
+    constructor(x = 0, y = 0, z = 0, w = 1) {
+        this.#x = x;
+        this.#y = y;
+        this.#z = z;
+        this.#w = w;
+    }
+
+    // Getters for the quaternion components
+    get x() {
+        return this.#x;
+    }
+
+    get y() {
+        return this.#y;
+    }
+
+    get z() {
+        return this.#z;
+    }
+
+    get w() {
+        return this.#w;
+    }
+
+    /**
+     * Creates a quaternion from an axis and angle.
+     * @param {Vec3} axis - The rotation axis.
+     * @param {number} angle - The rotation angle in radians.
+     * @returns {Quat} The resulting quaternion.
+     */
+    static fromAxisRotation(axis, angle) {
+        if (!(axis instanceof Vec3)) {
+            throw new TypeError("Axis must be an instance of Vec3");
+        }
+
+        const halfAngle = angle / 2;
+        const sinHalfAngle = Math.sin(halfAngle);
+        const cosHalfAngle = Math.cos(halfAngle);
+
+        const normalizedAxis = axis.normalize();
+
+        const x = normalizedAxis.x * sinHalfAngle;
+        const y = normalizedAxis.y * sinHalfAngle;
+        const z = normalizedAxis.z * sinHalfAngle;
+        const w = cosHalfAngle;
+
+        return new Quat(x, y, z, w).normalize();
+    }
+
+    /**
+     * Normalizes the quaternion to unit length.
+     * @returns {Quat} The normalized quaternion.
+     */
+    normalize() {
+        const length = Math.sqrt(
+            this.#x ** 2 + this.#y ** 2 + this.#z ** 2 + this.#w ** 2
+        );
+        if (length === 0) {
+            throw new Error("Cannot normalize a zero-length quaternion");
+        }
+        return new Quat(
+            this.#x / length,
+            this.#y / length,
+            this.#z / length,
+            this.#w / length
+        );
+    }
+
+    /**
+     * Converts the quaternion to a 4x4 rotation matrix.
+     * @returns {Mat4} The rotation matrix.
+     */
+    toRotationMatrix() {
+        const { x, y, z, w } = this.normalize();
+
+        const xx = x * x;
+        const yy = y * y;
+        const zz = z * z;
+        const xy = x * y;
+        const xz = x * z;
+        const yz = y * z;
+        const wx = w * x;
+        const wy = w * y;
+        const wz = w * z;
+
+        return new Mat4(
+            1 - 2 * (yy + zz),
+            2 * (xy - wz),
+            2 * (xz + wy),
+            0,
+            2 * (xy + wz),
+            1 - 2 * (xx + zz),
+            2 * (yz - wx),
+            0,
+            2 * (xz - wy),
+            2 * (yz + wx),
+            1 - 2 * (xx + yy),
+            0,
+            0,
+            0,
+            0,
+            1
+        );
+    }
+
+    /**
+     * Multiplies this quaternion by another quaternion.
+     * @param {Quat} q - The quaternion to multiply with.
+     * @returns {Quat} The resulting quaternion.
+     */
+    multiply(q) {
+        if (!(q instanceof Quat)) {
+            throw new TypeError("Argument must be an instance of Quat");
+        }
+
+        const x = this.#w * q.x + this.#x * q.w + this.#y * q.z - this.#z * q.y;
+        const y = this.#w * q.y - this.#x * q.z + this.#y * q.w + this.#z * q.x;
+        const z = this.#w * q.z + this.#x * q.y - this.#y * q.x + this.#z * q.w;
+        const w = this.#w * q.w - this.#x * q.x - this.#y * q.y - this.#z * q.z;
+
+        return new Quat(x, y, z, w).normalize();
+    }
+
+    /**
+     * Returns the conjugate of the quaternion.
+     * @returns {Quat} The conjugate quaternion.
+     */
+    conjugate() {
+        return new Quat(-this.#x, -this.#y, -this.#z, this.#w);
+    }
+
+    /**
+     * Returns a copy of the quaternion.
+     * @returns {Quat} A new quaternion with the same components.
+     */
+    clone() {
+        return new Quat(this.#x, this.#y, this.#z, this.#w);
+    }
+
+    /**
+     * Returns a string representation of the quaternion.
+     * @returns {string} The string representation.
+     */
+    toString() {
+        return `Quat( ${formatSmallFloats(this.#x)}, ${formatSmallFloats(
+            this.#y
+        )}, ${formatSmallFloats(this.#z)}, ${formatSmallFloats(this.#w)} )`;
     }
 }
 

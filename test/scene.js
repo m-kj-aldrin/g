@@ -1,14 +1,14 @@
 import { Mat3, Mat4, Vec2, Vec3 } from "../main.js";
 
-let m3_00 = Mat3.fromScaling(new Vec2(10, 100));
-let m3_01 = Mat3.fromTranslation(new Vec2(2, 1));
+let v2_01 = new Vec2(1, 1);
+let v2_02 = new Vec2(100, 500);
 
-let m3_model_matrix = Mat3.multiply(m3_00, m3_01);
+let v2_03 = v2_01.add(v2_02);
 
-let v2 = new Vec2(0, 0);
+console.log(v2_01.toString());
+console.log(v2_02.toString());
+console.log(v2_03.toString());
 
-let v2_transformed = v2.clone().multiply(m3_model_matrix);
+let m3_00 = new Mat3();
 
-console.log(v2_transformed.toString());
-
-console.log(v2_transformed.dot(v2_transformed));
+console.log(m3_00.toString());
