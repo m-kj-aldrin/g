@@ -589,6 +589,113 @@ class Mat4 {
         let { x, y, z } = vector;
         return new Mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y, z, 1);
     }
+
+    /**
+     * Creates a lookAt view matrix.
+     * @param {Vec3} eye - The position of the camera.
+     * @param {Vec3} center - The point the camera is looking at.
+     * @param {Vec3} up - The up direction vector.
+     * @returns {Mat4} The view matrix.
+     */
+    static lookAt(eye, center, up) {
+        if (
+            !(eye instanceof Vec3) ||
+            !(center instanceof Vec3) ||
+            !(up instanceof Vec3)
+        ) {
+            throw new TypeError("Arguments must be instances of Vec3");
+        }
+
+        const f = center.subtract(eye).normalize(); // Forward vector
+        const s = f.cross(up).normalize(); // Right vector
+        const u = s.cross(f); // True up vector
+
+        const e = new Float32Array([
+            s.x,
+            u.x,
+            -f.x,
+            0,
+            s.y,
+            u.y,
+            -f.y,
+            0,
+            s.z,
+            u.z,
+            -f.z,
+            0,
+            0,
+            0,
+            0,
+            1,
+        ]);
+
+        const translation = Mat4.fromTranslation(
+            new Vec3(-eye.x, -eye.y, -eye.z)
+        );
+
+        const viewMatrix = new Mat4(...e).multiply(translation);
+
+        return viewMatrix;
+    }
+
+    /**
+     * Creates an orthographic projection matrix.
+     * @param {number} left - Left boundary of the viewing volume.
+     * @param {number} right - Right boundary of the viewing volume.
+     * @param {number} bottom - Bottom boundary of the viewing volume.
+     * @param {number} top - Top boundary of the viewing volume.
+     * @param {number} near - Near clipping plane.
+     * @param {number} far - Far clipping plane.
+     * @returns {Mat4} The orthographic projection matrix.
+     */
+    static orthographic(left, right, bottom, top, near, far) {
+        const rl = right - left;
+        const tb = top - bottom;
+        const fn = far - near;
+
+        const tx = -(right + left) / rl;
+        const ty = -(top + bottom) / tb;
+        const tz = -(far + near) / fn;
+
+        const ortho = new Mat4(
+            2 / rl,
+            0,
+            0,
+            0,
+            0,
+            2 / tb,
+            0,
+            0,
+            0,
+            0,
+            -2 / fn,
+            0,
+            tx,
+            ty,
+            tz,
+            1
+        );
+
+        return ortho;
+    }
+    /**
+     * Creates a viewport transformation matrix to map NDC to screen space.
+     * @param {number} width - The width of the canvas in pixels.
+     * @param {number} height - The height of the canvas in pixels.
+     * @param {number} [depth=1] - The depth range. Default is 1.
+     * @returns {Mat4} The viewport transformation matrix.
+     */
+    static viewport(width, height, depth = 1) {
+        const sx = width / 2;
+        const sy = -height / 2; // Negative to invert Y-axis
+        const sz = depth / 2;
+
+        const tx = width / 2;
+        const ty = height / 2;
+        const tz = depth / 2;
+
+        return new Mat4(sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, 0, tx, ty, tz, 1);
+    }
 }
 
 /**
