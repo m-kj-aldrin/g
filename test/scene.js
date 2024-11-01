@@ -1,14 +1,11 @@
-import { Mat3, Mat4, Vec2, Vec3 } from "../main.js";
+import { Mat3, Mat4, Quat, Vec2, Vec3 } from "../main.js";
 
-let v2_01 = new Vec2(1, 1);
-let v2_02 = new Vec2(100, 500);
+let v3_00 = new Vec3(1, 0, 0);
 
-let v2_03 = v2_01.add(v2_02);
+let quat_00 = Quat.fromAxisRotation(new Vec3(0, 0, 1), Math.PI / 2);
 
-console.log(v2_01.toString());
-console.log(v2_02.toString());
-console.log(v2_03.toString());
+let m4_rot = quat_00.toRotationMatrix();
 
-let m3_00 = new Mat3();
+let v3_transformed = v3_00.multiply(m4_rot);
 
-console.log(m3_00.toString());
+console.log(v3_transformed.toString());

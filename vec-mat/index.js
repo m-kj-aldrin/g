@@ -694,10 +694,10 @@ class Quat {
 
         return new Mat4(
             1 - 2 * (yy + zz),
-            2 * (xy - wz),
+            2 * (xy + wz),
             2 * (xz + wy),
             0,
-            2 * (xy + wz),
+            2 * (xy - wz),
             1 - 2 * (xx + zz),
             2 * (yz - wx),
             0,
@@ -757,4 +757,4 @@ class Quat {
     }
 }
 
-export { Vec2, Vec3, Mat3, Mat4 };
+export { Vec2, Vec3, Mat3, Mat4, Quat };
