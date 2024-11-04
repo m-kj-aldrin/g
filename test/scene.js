@@ -1,5 +1,5 @@
 import { Canvas } from "../canvas/index.js";
-import { Mat4, Vec2, Vec3 } from "../main.js";
+import { Mat2, Mat4, Vec2, Vec3 } from "../main.js";
 import { OrthographicCamera } from "../vec-mat/camera.js";
 
 let canvas = new Canvas();

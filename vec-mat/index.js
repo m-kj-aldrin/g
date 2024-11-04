@@ -104,13 +104,22 @@ class Vec2 {
 
   /**
    * Multiplies the vector either by a vector component-wise or with a matrix.
-   * @param {Vec2 | Mat3} vectorOrMatrix
+   * @param {Vec2 | Mat2 | Mat3} vectorOrMatrix
    * @returns {Vec2} This vector after multiplication.
    */
   multiply(vectorOrMatrix) {
     if (vectorOrMatrix instanceof Vec2) {
       let _x = this.#x * vectorOrMatrix.#x;
       let _y = this.#y * vectorOrMatrix.#y;
+      return new Vec2(_x, _y);
+    }
+
+    if (vectorOrMatrix instanceof Mat2) {
+      let e = vectorOrMatrix.elements;
+
+      let _x = this.#x * e[0] + this.#y * e[2];
+      let _y = this.#x * e[1] + this.#y * e[3];
+
       return new Vec2(_x, _y);
     }
 
@@ -124,7 +133,7 @@ class Vec2 {
       return new Vec2(_x, _y);
     }
 
-    throw new TypeError("vectorOrMatrix needs to be of type Vec2 | Mat3");
+    throw new TypeError("vectorOrMatrix needs to be of type Vec2 | Mat2 | Mat3");
   }
 
   get length() {
@@ -267,7 +276,7 @@ class Vec3 {
 
   /**
    * Multiplies the vector either by a vector component-wise or with a matrix.
-   * @param {Vec3 | Mat4} vectorOrMatrix
+   * @param {Vec3 | Mat3 | Mat4} vectorOrMatrix
    * @returns {Vec3} A new Vec3 instance after multiplication.
    */
   multiply(vectorOrMatrix) {
@@ -277,6 +286,16 @@ class Vec3 {
         this.#y * vectorOrMatrix.#y,
         this.#z * vectorOrMatrix.#z
       );
+    }
+
+    if (vectorOrMatrix instanceof Mat3) {
+      const e = vectorOrMatrix.elements;
+
+      let _x = this.#x * e[0] + this.#y * e[4] + this.#z * e[8];
+      let _y = this.#x * e[1] + this.#y * e[5] + this.#z * e[9];
+      let _z = this.#x * e[2] + this.#y * e[6] + this.#z * e[10];
+
+      return new Vec3(_x, _y, _z);
     }
 
     if (vectorOrMatrix instanceof Mat4) {
@@ -316,7 +335,6 @@ class Vec3 {
   }
 
   /**
-   * Creates a copy of this Vec3 instance.
    * @returns {Vec3} A new Vec3 instance with the same components.
    */
   clone() {
@@ -324,13 +342,116 @@ class Vec3 {
   }
 
   /**
-   * Returns a string representation of the vector.
    * @returns {string} The string representation.
    */
   toString() {
     return `Vec3( ${formatSmallFloats(this.#x)} , ${formatSmallFloats(
       this.#y
     )} , ${formatSmallFloats(this.#z)} )`;
+  }
+}
+
+class Mat2 {
+  /**
+   * Matrix elements in column-major order.
+   * Initialized to the identity matrix by default.
+   */
+  #elements = new Float32Array([1, 0, 0, 1]);
+
+  /**
+   * Constructs a Mat2 instance.
+   * @param  {...number} elements - Exactly 4 numbers representing the matrix in column-major order.
+   * @throws Will throw an error if the number of elements is not exactly 4.
+   */
+  constructor(...elements) {
+    if (elements.length) {
+      if (elements.length === 4) {
+        this.#elements.set(elements);
+      } else {
+        throw new Error("Mat2 needs to be set with exactly 4 elements in column-major order");
+      }
+    }
+  }
+
+  /**
+   * Getter for the matrix elements.
+   * @returns {Float32Array} - The matrix elements.
+   */
+  get elements() {
+    return this.#elements;
+  }
+
+  /**
+   * Multiplies this matrix with another Mat2 matrix.
+   * @param {Mat2} matrix - The matrix to multiply with.
+   * @returns {Mat2} - The resulting matrix after multiplication.
+   */
+  multiply(matrix) {
+    const a = this.#elements;
+    const b = matrix.#elements;
+
+    const result = new Float32Array(4);
+
+    // Perform matrix multiplication (column-major)
+    // [a0 a2]   [b0 b2]
+    // [a1 a3] * [b1 b3]
+    result[0] = a[0] * b[0] + a[2] * b[1];
+    result[1] = a[1] * b[0] + a[3] * b[1];
+    result[2] = a[0] * b[2] + a[2] * b[3];
+    result[3] = a[1] * b[2] + a[3] * b[3];
+
+    const m = new Mat2();
+    m.#elements = result;
+
+    return m;
+  }
+
+  /**
+   * Creates a clone of this matrix.
+   * @returns {Mat2} - A new Mat2 instance with the same elements.
+   */
+  clone() {
+    return new Mat2(...this.#elements);
+  }
+
+  /**
+   * Returns a string representation of the matrix.
+   * @returns {string} - The string representation.
+   */
+  toString() {
+    return matrixToString(this.#elements, 2, 2, 2, "Mat2");
+  }
+
+  /**
+   * Multiplies multiple Mat2 matrices in sequence.
+   * @param  {...Mat2} matrices - The matrices to multiply.
+   * @returns {Mat2} - The resulting matrix after all multiplications.
+   */
+  static multiply(...matrices) {
+    return matrices.reduce((acc, mat) => acc.multiply(mat), new Mat2());
+  }
+
+  /**
+   * Creates a scaling matrix from a vector.
+   * @param {Object} vector - An object with x and y properties.
+   * @param {number} vector.x - Scaling factor along the x-axis.
+   * @param {number} vector.y - Scaling factor along the y-axis.
+   * @returns {Mat2} - The scaling matrix.
+   */
+  static fromScaling(vector) {
+    const { x, y } = vector;
+    return new Mat2(x, 0, 0, y);
+  }
+
+  /**
+   * Creates a rotation matrix for a given angle.
+   * @param {number} angle - The rotation angle in radians.
+   * @returns {Mat2} - The rotation matrix.
+   */
+  static fromRotation(angle) {
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    return new Mat2(cos, sin, -sin, cos);
   }
 }
 
@@ -558,20 +679,20 @@ class Mat4 {
   }
 
   /**
-   * Creates a lookAt view matrix.
-   * @param {Vec3} eye - The position of the camera.
-   * @param {Vec3} center - The point the camera is looking at.
-   * @param {Vec3} up - The up direction vector.
-   * @returns {Mat4} The view matrix.
+   *
+   * @param {Vec3} eye
+   * @param {Vec3} center
+   * @param {Vec3} up
+   * @returns {Mat4}
    */
   static lookAt(eye, center, up) {
     if (!(eye instanceof Vec3) || !(center instanceof Vec3) || !(up instanceof Vec3)) {
       throw new TypeError("Arguments must be instances of Vec3");
     }
 
-    const f = center.subtract(eye).normalize(); // Forward vector
-    const s = f.cross(up).normalize(); // Right vector
-    const u = s.cross(f); // True up vector
+    const f = center.subtract(eye).normalize();
+    const s = f.cross(up).normalize();
+    const u = s.cross(f);
 
     const e = new Float32Array([
       s.x,
@@ -600,15 +721,15 @@ class Mat4 {
   }
 
   /**
-   * Creates an orthographic projection matrix.
-   * @param {number} left - Left boundary of the viewing volume.
-   * @param {number} right - Right boundary of the viewing volume.
-   * @param {number} bottom - Bottom boundary of the viewing volume.
-   * @param {number} top - Top boundary of the viewing volume.
-   * @param {number} near - Near clipping plane.
-   * @param {number} far - Far clipping plane.
+   * Ortho projection
+   * @param {number} left
+   * @param {number} right
+   * @param {number} bottom
+   * @param {number} top
+   * @param {number} near
+   * @param {number} far
    * @param {number} aspect
-   * @returns {Mat4} The orthographic projection matrix.
+   * @returns {Mat4}
    */
   static orthographic(left, right, bottom, top, near, far, aspect) {
     if (aspect >= 1) {
@@ -632,15 +753,15 @@ class Mat4 {
     return ortho;
   }
   /**
-   * Creates a viewport transformation matrix to map NDC to screen space.
-   * @param {number} width - The width of the canvas in pixels.
-   * @param {number} height - The height of the canvas in pixels.
-   * @param {number} [depth=1] - The depth range. Default is 1.
-   * @returns {Mat4} The viewport transformation matrix.
+   * NDC to Viewport pixel
+   * @param {number} width
+   * @param {number} height
+   * @param {number} [depth=1]
+   * @returns {Mat4}
    */
   static viewport(width, height, depth = 1) {
     const sx = width / 2;
-    const sy = -height / 2; // Negative to invert Y-axis
+    const sy = -height / 2;
     const sz = depth / 2;
 
     const tx = width / 2;
@@ -661,7 +782,6 @@ class Quat {
   #w = 1;
 
   /**
-   * Creates a new Quaternion.
    * @param {number} x - The x component.
    * @param {number} y - The y component.
    * @param {number} z - The z component.
@@ -674,7 +794,6 @@ class Quat {
     this.#w = w;
   }
 
-  // Getters for the quaternion components
   get x() {
     return this.#x;
   }
@@ -693,9 +812,9 @@ class Quat {
 
   /**
    * Creates a quaternion from an axis and angle.
-   * @param {Vec3} axis - The rotation axis.
-   * @param {number} angle - The rotation angle in radians.
-   * @returns {Quat} The resulting quaternion.
+   * @param {Vec3} axis
+   * @param {number} angle
+   * @returns {Quat}
    */
   static fromAxisRotation(axis, angle) {
     if (!(axis instanceof Vec3)) {
@@ -717,8 +836,7 @@ class Quat {
   }
 
   /**
-   * Normalizes the quaternion to unit length.
-   * @returns {Quat} The normalized quaternion.
+   * @returns {Quat}
    */
   normalize() {
     const length = Math.sqrt(this.#x ** 2 + this.#y ** 2 + this.#z ** 2 + this.#w ** 2);
@@ -729,8 +847,7 @@ class Quat {
   }
 
   /**
-   * Converts the quaternion to a 4x4 rotation matrix.
-   * @returns {Mat4} The rotation matrix.
+   * @returns {Mat4}
    */
   toRotationMatrix() {
     const { x, y, z, w } = this.normalize();
@@ -766,9 +883,8 @@ class Quat {
   }
 
   /**
-   * Multiplies this quaternion by another quaternion.
-   * @param {Quat} q - The quaternion to multiply with.
-   * @returns {Quat} The resulting quaternion.
+   * @param {Quat} q
+   * @returns {Quat}
    */
   multiply(q) {
     if (!(q instanceof Quat)) {
@@ -784,24 +900,21 @@ class Quat {
   }
 
   /**
-   * Returns the conjugate of the quaternion.
-   * @returns {Quat} The conjugate quaternion.
+   * @returns {Quat}
    */
   conjugate() {
     return new Quat(-this.#x, -this.#y, -this.#z, this.#w);
   }
 
   /**
-   * Returns a copy of the quaternion.
-   * @returns {Quat} A new quaternion with the same components.
+   * @returns {Quat}
    */
   clone() {
     return new Quat(this.#x, this.#y, this.#z, this.#w);
   }
 
   /**
-   * Returns a string representation of the quaternion.
-   * @returns {string} The string representation.
+   * @returns {string}
    */
   toString() {
     return `Quat( ${formatSmallFloats(this.#x)}, ${formatSmallFloats(this.#y)}, ${formatSmallFloats(
@@ -810,4 +923,4 @@ class Quat {
   }
 }
 
-export { Vec2, Vec3, Mat3, Mat4, Quat };
+export { Vec2, Vec3, Mat2, Mat3, Mat4, Quat };
