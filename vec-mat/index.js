@@ -383,9 +383,10 @@ class Mat3 {
     result[7] = a[1] * b[6] + a[4] * b[7] + a[7] * b[8];
     result[8] = a[2] * b[6] + a[5] * b[7] + a[8] * b[8];
 
-    this.#elements.set(result);
+    let m = new Mat3();
+    m.#elements = result;
 
-    return this;
+    return m;
   }
 
   clone() {
@@ -489,9 +490,10 @@ class Mat4 {
     result[14] = a[2] * b[12] + a[6] * b[13] + a[10] * b[14] + a[14] * b[15];
     result[15] = a[3] * b[12] + a[7] * b[13] + a[11] * b[14] + a[15] * b[15];
 
-    this.#elements.set(result);
+    let m = new Mat4();
+    m.#elements = result;
 
-    return this;
+    return m;
   }
 
   clone() {
