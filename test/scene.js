@@ -5,10 +5,10 @@ import { OrthographicCamera } from "../vec-mat/camera.js";
 let canvas = new Canvas();
 canvas.attach(document.body);
 
-let zoom = 1;
+let zoom = 3;
 
 let ortho = new OrthographicCamera(
-  new Vec3(0, 0, 10),
+  new Vec3(5, 5, 5),
   new Vec3(0, 0, 0),
   -zoom,
   zoom,
@@ -41,8 +41,6 @@ let worldPoint = new Vec3(0, 0, 0);
 
 let screenPoint = project(viewMatrix, projectionMatrix, viewPortMatrix, worldPoint);
 
-console.log(screenPoint.toString());
-
 /**
  * @param {CanvasRenderingContext2D} ctx
  * @param {Vec2} point
@@ -59,25 +57,37 @@ function render_circle(ctx, point) {
 
 /**
  *
- * @param {Vec3} p
- * @param {number} s
+ * @param {Object} o
+ * @param {Vec3} [o.p]
+ * @param {number} [o.s]
+ * @param {Vec3} [o.color]
  * @returns
  */
-function square(p, s) {
+function square(o) {
+  o = {
+    p: new Vec3(),
+    s: 1,
+    color: new Vec3(128, 128, 128),
+    ...o,
+  };
+
   let verts = [new Vec3(-1, -1, 0), new Vec3(-1, 1, 0), new Vec3(1, 1, 0), new Vec3(1, -1, 0)];
 
-  let modelMatrix = Mat4.fromTranslation(p);
+  let modelMatrix = Mat4.fromTranslation(o.p);
 
   /**
    *
    * @param {CanvasRenderingContext2D} ctx
-   * @param {(v:Vec3)=>Vec2} projector
+   * @param {OrthographicCamera} camera
    */
-  function render(ctx, projector) {
-    let projectedVerts = verts.map((v) => projector(v.multiply(modelMatrix).scalarMultiply(s)));
+  function render(ctx, camera) {
+    let projectedVerts = verts.map((v) => {
+      return camera.project(v.multiply(modelMatrix).scalarMultiply(o.s), viewPortMatrix);
+    });
 
     // console.log(projectedVerts.join("  "));
 
+    ctx.fillStyle = `rgb(${o.color.x},${o.color.y},${o.color.z})`;
     ctx.beginPath();
     ctx.moveTo(projectedVerts[0].x, projectedVerts[0].y);
     projectedVerts.slice(1).forEach((v) => {
@@ -88,13 +98,32 @@ function square(p, s) {
   }
 
   return {
+    p: o.p,
     render,
   };
 }
 
-let sq0 = square(new Vec3(0, 0, 0), 0.5);
+let squares = [
+  square({ p: new Vec3(0, 0, 1), color: new Vec3(192, 32, 32) }),
+  square({ p: new Vec3(0, 0, 0), color: new Vec3(32, 192, 32) }),
+  square({ p: new Vec3(0, 0, -1), color: new Vec3(32, 32, 192) }),
+];
 
-// let projector = (v, p, w) => () =>
-//     project(v, p, w)(viewMatrix, projectionMatrix, viewPortMatrix, worldPoint);
+function render(t = 0) {
+  t /= 1000;
 
-sq0.render(canvas.context, (v) => project(viewMatrix, projectionMatrix, viewPortMatrix, v));
+  let rotMat = Mat4.fromAxisRotation(new Vec3(0, 1, 0), 0.01);
+  ortho.position = ortho.position.multiply(rotMat);
+
+  canvas.context.clearRect(0, 0, canvas.width, canvas.height);
+
+  squares
+    .sort((a, b) => b.p.distanceTo(ortho.position) - a.p.distanceTo(ortho.position))
+    .forEach((sq) => {
+      sq.render(canvas.context, ortho);
+    });
+
+  requestAnimationFrame(render);
+}
+
+requestAnimationFrame(render);

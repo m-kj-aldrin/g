@@ -178,11 +178,17 @@ class OrthographicCamera extends Camera {
   getViewProjectionMatrix() {
     const projection = this.getProjectionMatrix();
     const view = this.getViewMatrix();
-    // console.log(view.toString());
-
-    // console.log(projection.toString());
 
     return Mat4.multiply(projection, view);
+  }
+
+  /**
+   * @param {Vec3} point
+   * @param {Mat4} viewPortMatrix
+   */
+  project(point, viewPortMatrix) {
+    let m = this.getViewProjectionMatrix();
+    return point.multiply(viewPortMatrix.multiply(m));
   }
 }
 
